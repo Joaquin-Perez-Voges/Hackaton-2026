@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="quiz-header">
+    <a href="index.html" class="btn-volver">← Volver</a>
+    <h2 id="quiz-titulo"></h2>
+  </div>
+
+  <div class="quiz-container">
+    <div class="resumen-box">
+      <strong>Resumen:</strong>
+      <p id="quiz-resumen"></p>
+    </div>
+
+    <form id="quiz-form"></form>
+
+    <button onclick="corregir()" id="btn-corregir">Ver resultados</button>
+    <div id="quiz-resultado" class="oculto resultado-final"></div>
+  </div>
+
+  <script src="quiz.js"></script>
+</body>
+</html>
