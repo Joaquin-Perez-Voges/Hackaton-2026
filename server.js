@@ -1,16 +1,13 @@
- // import { apikey } from "./apikey";
+import express from 'express';
+import fs from 'fs';
+import path from 'path';
 
- import express from 'express';
- import fs from 'fs';
- import path from 'path';
-import { apikey } from './apikey';
- 
  const app = express();
  app.use(express.json());
  app.use(express.static('FrontEnd'));
  
  // ── Configuración OpenRouter ──────────────────────────────────────────────────
- const OPENROUTER_API_KEY = apikey();
+ const OPENROUTER_API_KEY = APIKEY; 
  const OPENROUTER_URL    = "https://openrouter.ai/api/v1/chat/completions";
  const MODEL             = "nvidia/nemotron-3-nano-30b-a3b:free";
  
