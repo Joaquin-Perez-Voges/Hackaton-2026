@@ -175,8 +175,6 @@ async function generarMateria() {
     document.getElementById('overlay-loading').classList.add('oculto')
     await cargarMaterias()
 
-    window.location.href = `quiz.html?id=${materia.id}`
-
   } catch (error) {
     document.getElementById('overlay-loading').classList.add('oculto')
     alert('Hubo un error: ' + error.message)
