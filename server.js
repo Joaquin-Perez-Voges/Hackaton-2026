@@ -88,12 +88,39 @@ import path from 'path';
      return res.status(400).json({ error: 'Faltan campos: nombre, texto, cantidadPreguntas' });
    }
  
-   const prompt = `Resumí este texto y generá exactamente ${cantidadPreguntas} preguntas multiple choice.
- Respondé SOLO con JSON válido, sin backticks ni texto extra, con este formato:
- { "resumen": "...", "preguntas": [ { "pregunta": "...", "opciones": ["A. ...", "B. ...", "C. ...", "D. ..."], "correcta": 0 } ] }
- El campo "correcta" es el índice (0-3) de la opción correcta.
- 
- TEXTO: ${texto}`;
+   const prompt = `Actuá como un experto en pedagogía y procesamiento de datos. Tu tarea es procesar el texto que te proporcionaré al final según las siguientes instrucciones estrictas:
+
+1. RESUMEN: Extraé las ideas principales de forma concisa.
+2. PREGUNTAS: Generá exactamente ${cantidadPreguntas} preguntas de opción múltiple basadas únicamente en el texto.
+   - Cada pregunta debe tener exactamente 4 opciones (A, B, C, D).
+   - Solo una opción debe ser correcta.
+   - Evitá opciones ambiguas.
+
+3. FORMATO DE SALIDA: Tu respuesta debe ser EXCLUSIVAMENTE un objeto JSON válido. 
+   - NO incluyas texto de introducción ni de cierre.
+   - NO uses bloques de código con triples comillas invertidas.
+   - Asegurá que los caracteres especiales estén correctamente escapados para no romper el JSON.
+
+Respetá estrictamente la siguiente estructura de datos:
+{
+  "resumen": "Aquí va el resumen del texto...",
+  "preguntas": [
+    {
+      "pregunta": "¿Cuál es la pregunta...?",
+      "opciones": [
+        "A. Primera opción",
+        "B. Segunda opción",
+        "C. Tercera opción",
+        "D. Cuarta opción"
+      ],
+      "correcta": 0
+    }
+  ]
+}
+
+Nota: El campo "correcta" debe ser un número entero que represente el índice (0 para A, 1 para B, 2 para C, 3 para D) de la respuesta correcta.
+
+TEXTO A PROCESAR:${texto}`;
  
    try {
      const contenidoIA = await llamarIA(prompt);
@@ -104,8 +131,7 @@ import path from 'path';
        id: Date.now(),
        nombre,
        texto,
-       resumen:   resultado.resumen,
-       preguntas: resultado.preguntas
+       resumen:   resultado.resumen
      };
  
      materias.push(nuevaMateria);

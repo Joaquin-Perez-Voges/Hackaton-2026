@@ -14,7 +14,6 @@ async function cargarQuiz() {
   }
 
   document.getElementById('quiz-titulo').textContent = materiaActual.nombre;
-  document.getElementById('quiz-resumen').textContent = materiaActual.resumen;
 
   const form = document.getElementById('quiz-form');
   form.innerHTML = '';
