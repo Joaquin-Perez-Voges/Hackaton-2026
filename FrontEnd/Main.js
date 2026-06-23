@@ -23,7 +23,7 @@ async function cargarMaterias() {
         <button onclick="eliminarMateria(${m.id})" class="btn-eliminar">🗑️</button>
       </div>
     `
-  lista.appendChild(card)
+    lista.appendChild(card)
   })
 }
 
@@ -38,10 +38,12 @@ const BotonAbrirPanelCreacion = document.getElementById("btn-nuevo")
 BotonAbrirPanelCreacion.addEventListener("click", function(){
   document.getElementById('overlay-crear').classList.remove('oculto')
 })
+
 const BotonCerrarPopup = document.getElementById("BotonCerrarPopup")
 BotonCerrarPopup.addEventListener("click", function(){
   cerrarPopupCrear()
 })
+
 const BotonCrearMateria = document.getElementById("BotonCrearMateria")
 BotonCrearMateria.addEventListener("click", function(){
   let nombre = document.getElementById('input-nombre').value.trim()
@@ -57,7 +59,6 @@ BotonCrearMateria.addEventListener("click", function(){
   document.getElementById('overlay-cantidad').classList.remove('oculto')
 })
 
-
 function cerrarPopupCantidad() {
   document.getElementById('overlay-cantidad').classList.add('oculto')
 }
@@ -66,6 +67,7 @@ const BotonCerrarPopupPreguntas = document.getElementById("BotonCerrarPopupPregu
 BotonCerrarPopupPreguntas.addEventListener("click", function(){
   cerrarPopupCantidad()
 })
+
 const BotonCrearMateriaFinal = document.getElementById("BotonCrearMateriaFinal")
 BotonCrearMateriaFinal.addEventListener("click", function(){
   generarMateria()
@@ -81,8 +83,20 @@ async function eliminarMateria(id) {
 async function generarMateria() {
   const cantidad = document.getElementById('input-cantidad').value
 
+  // Deshabilitar botón para evitar doble click
+  BotonCrearMateriaFinal.disabled = true
+
+  // 1. Cerrar popup de cantidad
   cerrarPopupCantidad()
+
+  // 2. Esperar un frame para que el browser termine de cerrar el popup
+  await new Promise(r => setTimeout(r, 50))
+
+  // 3. Mostrar loading
   document.getElementById('overlay-loading').classList.remove('oculto')
+
+  // 4. Otro frame para asegurar que el loading se pinta antes de empezar el fetch
+  await new Promise(r => setTimeout(r, 50))
 
   try {
     const res = await fetch('/api/crear', {
@@ -96,8 +110,19 @@ async function generarMateria() {
     })
 
     const materia = await res.json()
-    document.getElementById('overlay-loading').classList.add('oculto')
 
+    // 409 = duplicado, 429 = lock activo: la materia ya fue/está siendo creada, no es un error real
+    if (res.status === 409 || res.status === 429) {
+      document.getElementById('overlay-loading').classList.add('oculto')
+      await cargarMaterias()
+      return
+    }
+
+    if (!res.ok) {
+      throw new Error(materia.error || 'Error desconocido')
+    }
+
+    document.getElementById('overlay-loading').classList.add('oculto')
     await cargarMaterias()
 
     // Ir directo al quiz de la materia recién creada
@@ -105,8 +130,11 @@ async function generarMateria() {
 
   } catch (error) {
     document.getElementById('overlay-loading').classList.add('oculto')
-    alert('Hubo un error. Revisá la consola.')
+    alert('Hubo un error: ' + error.message)
     console.error(error)
+  } finally {
+    // Siempre rehabilitar el botón al terminar
+    BotonCrearMateriaFinal.disabled = false
   }
 }
 
