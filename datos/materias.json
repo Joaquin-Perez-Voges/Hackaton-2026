@@ -1,1 +1,110 @@
-[]
+[
+  {
+    "id": 1782219188287,
+    "nombre": "cs2",
+    "texto": "Para dominar Mirage en Counter-Strike 2 (CS2), necesitas controlar el mapa por zonas y dominar la utilidad básica.Aquí tenés el resumen clave para jugarlo de forma eficiente:🗺️ Control de Zonas ClaveMedio (Mid): Es la zona más importante del mapa. Quien controla Medio puede rotar rápido o atacar cualquier sitio.Palacio y Caverna (A Main): Entradas principales al Sitio de A. Requieren sincronización y humo.Apartamentos (Apps): Entrada estrecha hacia el Sitio de B. Es un cuello de botella peligroso para los Terro.💣 Jugando de Terrorista (TR)Dominar Medio: Tirar humo en Ventana y Conector al inicio de la ronda para ganar espacio.Falsificar ataques (Fake): Hacer ruido en B con utilidades y luego atacar A en silencio funciona muy bien.Sincronización en A: Atacar al mismo tiempo por Palacio y por Caverna para dividir la mira de los defensores.Rush B controlado: Entrar rápido por Apartamentos tirando flashes por las ventanas para cegar al rival en \"Coche\".🛡️ Jugando de Antiterrorista (CT)Distribución estándar: Lo ideal es defender con un sistema 2-1-2 (dos en A, uno en Medio/Ventana, dos en B).El rol de Ventana: El jugador de Medio (generalmente con AWP) debe conseguir la primera baja o dar información.Retomas (Retakes) en A: Si plantan en A, es más fácil recuperar el sitio entrando juntos por Conector, Liga (Short) y CT.Uso de Molotovs: Tirar fuego en Apartamentos o Caverna frena los ataques rápidos (rushes) al inicio de la ronda.🚀 Utilidad Imprescindible (Smokes)Para atacar A: Humos esenciales en CT, Jungla y Escaleras para tapar la visión defensiva.Para atacar B: Humos en Liga (Short) y Arco/Ventana de B para aislar el sitio.Para ayudarte a mejorar tu estrategia, ¿querés que te explique cómo tirar los humos de A paso a paso, o preferís consejos sobre qué armas comprar en las primeras rondas?",
+    "resumen": "Para dominar Mirage en CS2 es clave controlar el Medio, usar smokes en áreas específicas y sincronizar ataques en A y B; los CT deben distribuirse 2-1-2 y usar utilidades como molotovs en Apartamentos.",
+    "preguntas": [
+      {
+        "pregunta": "¿Cuál es la zona más importante del mapa Mirage?",
+        "opciones": [
+          "A. Palacio",
+          "B. Medio",
+          "C. Ventana",
+          "D. Apartamentos"
+        ],
+        "correcta": 1
+      },
+      {
+        "pregunta": "¿Qué tipo de utilidad es esencial para atacar el Sitio A?",
+        "opciones": [
+          "A. Flash",
+          "B. Molotov",
+          "C. Humo en CT/Jungle",
+          "D. Granada de Humo en Escaleras"
+        ],
+        "correcta": 2
+      },
+      {
+        "pregunta": "¿Qué combinación de entradas se recomienda para atacar el Sitio A?",
+        "opciones": [
+          "A. Solo por Palacio",
+          "B. Por Palacio y Caverna simultáneamente",
+          "C. Solo por Conector",
+          "D. Por Apartamentos"
+        ],
+        "correcta": 1
+      },
+      {
+        "pregunta": "¿Cuál es la distribución estándar de defensa CT en Mirage?",
+        "opciones": [
+          "A. 3-0-2",
+          "B. 2-1-2",
+          "C. 1-3-1",
+          "D. 4-1-0"
+        ],
+        "correcta": 1
+      },
+      {
+        "pregunta": "¿Qué rol tiene el jugador posicionado en Ventana (Mid) para los CT?",
+        "opciones": [
+          "A. Liderar el ataque B",
+          "B. Obtener la primera baja o dar información",
+          "C. Defender el sitio B",
+          "D. Lanzar smokes en B"
+        ],
+        "correcta": 1
+      },
+      {
+        "pregunta": "¿Qué utilidad se usa para frenar rushes rápidos en Apartamentos y Caverna?",
+        "opciones": [
+          "A. Flash",
+          "B. Smoke",
+          "C. Molotov",
+          "D. HE"
+        ],
+        "correcta": 2
+      },
+      {
+        "pregunta": "¿Qué acción se sugiere a los Terroristas al inicio de la ronda para ganar espacio en Medio?",
+        "opciones": [
+          "A. Tirar humo en Ventana y Conector",
+          "B. Plantar la bomba inmediatamente",
+          "C. Rotar a B",
+          "D. Defender el sitio A"
+        ],
+        "correcta": 0
+      },
+      {
+        "pregunta": "¿Cuál es una forma eficaz de falsificar un ataque en Mirage?",
+        "opciones": [
+          "A. Hacer ruido en B y atacar A en silencio",
+          "B. Plantar la bomba en A",
+          "C. Defender el Mid",
+          "D. Usar solo pistolas"
+        ],
+        "correcta": 0
+      },
+      {
+        "pregunta": "¿Qué zona es la entrada estrecha hacia el Sitio B mencionada en el texto?",
+        "opciones": [
+          "A. Palacio",
+          "B. Caverna",
+          "C. Apartamentos",
+          "D. Mid"
+        ],
+        "correcta": 2
+      },
+      {
+        "pregunta": "¿Qué utilidades son imprescindibles para atacar el sitio B?",
+        "opciones": [
+          "A. Humo en CT",
+          "B. Humo en Liga (Short) y Arco/Ventana de B",
+          "C. Molotov en Mid",
+          "D. Flash en Ventana"
+        ],
+        "correcta": 1
+      }
+    ]
+  }
+]
