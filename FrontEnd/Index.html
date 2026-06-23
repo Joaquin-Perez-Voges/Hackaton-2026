@@ -25,8 +25,8 @@
       <input type="text" id="input-nombre" placeholder="Nombre de la materia" />
       <textarea id="input-texto" placeholder="Pegá el texto a estudiar..."></textarea>
       <div class="popup-botones">
-        <button onclick="cerrarPopupCrear()">Cancelar</button>
-        <button onclick="procesarTexto()">Aceptar</button>
+        <button id="BotonCerrarPopup">Cancelar</button>
+        <button id="BotonCrearMateria">Aceptar</button>
       </div>
     </div>
   </div>
@@ -35,10 +35,10 @@
   <div id="overlay-cantidad" class="overlay oculto">
     <div class="popup popup-chico">
       <h2>¿Cuántas preguntas?</h2>
-      <input type="number" id="input-cantidad" value="5" min="1" max="30" />
+      <input type="number" id="input-cantidad" value="5"/>
       <div class="popup-botones">
-        <button onclick="cerrarPopupCantidad()">Cancelar</button>
-        <button onclick="generarMateria()">Crear</button>
+        <button id="BotonCerrarPopupPreguntas" onclick="cerrarPopupCantidad()">Cancelar</button>
+        <button id="BotonCrearMateriaFinal" onclick="generarMateria()">Crear</button>
       </div>
     </div>
   </div>

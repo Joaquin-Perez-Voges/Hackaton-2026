@@ -42,6 +42,14 @@ body{
   font-weight: bold;
   color: #4a90e2;
   text-decoration: none;
+  flex: 1; /* ocupa todo el espacio disponible */
+}
+
+.card-acciones {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-shrink: 0; /* nunca se achica ni se mueve */
 }
   
 .CartaMateria a:hover {
@@ -67,6 +75,21 @@ body{
   
 .BotonCreacion:hover {
   background: #357abd;
+}
+
+.btn-eliminar {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 0.3rem;
+  opacity: 0.4;
+  transition: opacity 0.2s;
+  margin-left: auto;
+}
+
+.btn-eliminar:hover {
+  opacity: 1;
 }
   
   /* OVERLAYS Y POPUPS */

@@ -1,7 +1,7 @@
 let textoGuardado = ''
 let nombreGuardado = ''
 
-
+//Carga todas las materias guardadas del json
 async function cargarMaterias() {
   const res = await fetch('/api/materias')
   const materias = await res.json()
@@ -16,27 +16,34 @@ async function cargarMaterias() {
   materias.forEach(m => {
     let card = document.createElement('div')
     card.className = 'CartaMateria'
-    card.innerHTML = 
-    `
+    card.innerHTML = `
       <a href="quiz.html?id=${m.id}">${m.nombre}</a>
-      <span>${m.preguntas.length} preguntas</span>
+      <div class="card-acciones">
+        <span>${m.preguntas.length} preguntas</span>
+        <button onclick="eliminarMateria(${m.id})" class="btn-eliminar">🗑️</button>
+      </div>
     `
-    lista.appendChild(card)
+  lista.appendChild(card)
   })
+}
+
+//Cerrar el popup de crear materia 
+function cerrarPopupCrear(){
+  document.getElementById('overlay-crear').classList.add('oculto')
+  document.getElementById('input-nombre').value = ''
+  document.getElementById('input-texto').value = ''
 }
 
 const BotonAbrirPanelCreacion = document.getElementById("btn-nuevo")
 BotonAbrirPanelCreacion.addEventListener("click", function(){
   document.getElementById('overlay-crear').classList.remove('oculto')
 })
-
-function cerrarPopupCrear() {
-  document.getElementById('overlay-crear').classList.add('oculto')
-  document.getElementById('input-nombre').value = ''
-  document.getElementById('input-texto').value = ''
-}
-
-function procesarTexto() {
+const BotonCerrarPopup = document.getElementById("BotonCerrarPopup")
+BotonCerrarPopup.addEventListener("click", function(){
+  cerrarPopupCrear()
+})
+const BotonCrearMateria = document.getElementById("BotonCrearMateria")
+BotonCrearMateria.addEventListener("click", function(){
   let nombre = document.getElementById('input-nombre').value.trim()
   let texto = document.getElementById('input-texto').value.trim()
 
@@ -48,12 +55,29 @@ function procesarTexto() {
 
   cerrarPopupCrear()
   document.getElementById('overlay-cantidad').classList.remove('oculto')
-}
+})
+
 
 function cerrarPopupCantidad() {
   document.getElementById('overlay-cantidad').classList.add('oculto')
 }
 
+const BotonCerrarPopupPreguntas = document.getElementById("BotonCerrarPopupPreguntas")
+BotonCerrarPopupPreguntas.addEventListener("click", function(){
+  cerrarPopupCantidad()
+})
+const BotonCrearMateriaFinal = document.getElementById("BotonCrearMateriaFinal")
+BotonCrearMateriaFinal.addEventListener("click", function(){
+  generarMateria()
+})
+
+//El boton que elimina la materia
+async function eliminarMateria(id) {
+  await fetch(`/api/materias/${id}`, { method: 'DELETE' })
+  cargarMaterias()
+}
+
+//Genera la materia
 async function generarMateria() {
   const cantidad = document.getElementById('input-cantidad').value
 
