@@ -2,19 +2,21 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Estudiá con IA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduAssist IA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="Style.css">
 </head>
 <body>
 
   <div class="container">
-    <h1 class="TituloPrincipal">EduAssist IA</h1>
-    <h3 class="SubtituloPrincipal">Estudiá con IA</h3>
+    <h1 class="TituloPrincipal">EduAssist</h1>
+    <p class="SubtituloPrincipal">Estudiá con IA</p>
 
-    <!-- Contenedor de las materias -->
     <div id="lista-materias"></div>
 
-    <!-- Boton para abrir panel de creacion -->
     <button class="BotonCreacion" id="btn-nuevo">+ Nueva materia</button>
   </div>
 
@@ -22,11 +24,11 @@
   <div id="overlay-crear" class="overlay oculto">
     <div class="popup">
       <h2>Nueva materia</h2>
-      <input type="text" id="input-nombre" placeholder="Nombre de la materia" />
-      <textarea id="input-texto" placeholder="Pegá el texto a estudiar..."></textarea>
+      <input type="text" id="input-nombre" placeholder="Nombre de la materia" autocomplete="off" />
+      <textarea id="input-texto" placeholder="Pegá el texto a estudiar…"></textarea>
       <div class="popup-botones">
         <button id="BotonCerrarPopup">Cancelar</button>
-        <button id="BotonCrearMateria">Aceptar</button>
+        <button id="BotonCrearMateria">Continuar</button>
       </div>
     </div>
   </div>
@@ -35,7 +37,7 @@
   <div id="overlay-cantidad" class="overlay oculto">
     <div class="popup popup-chico">
       <h2>¿Cuántas preguntas?</h2>
-      <input type="number" id="input-cantidad" value="5" min="1" max="20"/>
+      <input type="number" id="input-cantidad" value="5" min="1" max="20" />
       <div class="popup-botones">
         <button id="BotonCerrarPopupPreguntas">Cancelar</button>
         <button id="BotonCrearMateriaFinal">Crear</button>
@@ -45,8 +47,11 @@
 
   <!-- LOADING -->
   <div id="overlay-loading" class="overlay oculto">
-    <div class="popup-chico" style="text-align: center;">
-      <p>⏳ Generando preguntas...</p>
+    <div class="popup popup-chico">
+      <div class="loading-inner">
+        <div class="spinner"></div>
+        <p>Generando preguntas…</p>
+      </div>
     </div>
   </div>
 

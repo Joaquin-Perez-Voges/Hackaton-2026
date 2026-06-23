@@ -2,7 +2,11 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Quiz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz · EduAssist</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="Style.css">
 </head>
 <body>
@@ -14,17 +18,20 @@
 
   <!-- LOADING mientras genera nueva prueba -->
   <div id="overlay-loading" class="overlay oculto">
-    <div class="popup-chico" style="text-align: center;">
-      <p>⏳ Generando nueva prueba...</p>
+    <div class="popup popup-chico">
+      <div class="loading-inner">
+        <div class="spinner"></div>
+        <p>Generando prueba…</p>
+      </div>
     </div>
   </div>
 
   <div id="quiz-contenido" class="oculto">
     <p id="quiz-info" class="quiz-info"></p>
     <form id="quiz-form"></form>
-    <button onclick="corregir()" id="btn-corregir">Ver resultados</button>
+    <button id="btn-corregir" onclick="corregir()">Ver resultados</button>
     <div id="quiz-resultado" class="oculto resultado-final"></div>
-    <button onclick="nuevaPrueba()" id="btn-nueva-prueba" class="oculto">🔄 Nueva prueba</button>
+    <button id="btn-nueva-prueba" class="oculto" onclick="nuevaPrueba()">↺ Nueva prueba</button>
   </div>
 
   <script src="quiz.js"></script>
