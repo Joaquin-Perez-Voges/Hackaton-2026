@@ -131,7 +131,8 @@ TEXTO A PROCESAR:${texto}`;
        id: Date.now(),
        nombre,
        texto,
-       resumen:   resultado.resumen
+       resumen:   resultado.resumen,
+       preguntas: resultado.preguntas
      };
  
      materias.push(nuevaMateria);
