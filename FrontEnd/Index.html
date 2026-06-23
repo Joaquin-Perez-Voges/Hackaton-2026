@@ -3,19 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <title>Estudiá con IA</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="Style.css">
 </head>
 <body>
 
   <div class="container">
-    <h1>📚 Estudiá con IA</h1>
+    <h1 class="TituloPrincipal">EduAssist IA</h1>
+    <h3 class="SubtituloPrincipal">Estudiá con IA</h3>
 
+    <!-- Contenedor de las materias -->
     <div id="lista-materias"></div>
 
-    <button id="btn-nueva" onclick="abrirPopupNombre()">+ Nueva materia</button>
+    <!-- Boton para abrir panel de creacion -->
+    <button class="BotonCreacion" id="btn-nuevo">+ Nueva materia</button>
   </div>
 
-  <!-- POPUP 1: nombre y texto -->
+  <!-- POPUP nombre y texto -->
   <div id="overlay-crear" class="overlay oculto">
     <div class="popup">
       <h2>Nueva materia</h2>
@@ -28,11 +31,11 @@
     </div>
   </div>
 
-  <!-- POPUP 2: cantidad de preguntas -->
+  <!-- POPUP cantidad de preguntas -->
   <div id="overlay-cantidad" class="overlay oculto">
     <div class="popup popup-chico">
       <h2>¿Cuántas preguntas?</h2>
-      <input type="number" id="input-cantidad" value="5" min="1" max="15" />
+      <input type="number" id="input-cantidad" value="5" min="1" max="30" />
       <div class="popup-botones">
         <button onclick="cerrarPopupCantidad()">Cancelar</button>
         <button onclick="generarMateria()">Crear</button>

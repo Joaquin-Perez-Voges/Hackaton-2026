@@ -1,70 +1,73 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
+*{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
   
-  body {
-    font-family: Arial, sans-serif;
-    background: #f0f2f5;
-    min-height: 100vh;
-  }
+body{
+  font-family: Arial, sans-serif;
+  background: #f0f2f5;
+  min-height: 100vh;
+}
   
-  /* PAGINA PRINCIPAL */
-  .container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 2rem 1rem;
-  }
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
   
-  h1 {
-    font-size: 2rem;
-    margin-bottom: 2rem;
-    color: #222;
-  }
+.TituloPrincipal {
+  font-size: 2rem;
+  color: #222;
+}
+.SubtituloPrincipal {
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  color: #222;
+}
   
-  .materia-card {
-    background: white;
-    border-radius: 10px;
-    padding: 1.2rem 1.5rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
+.CartaMateria {
+  background: white;
+  border-radius: 10px;
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
   
-  .materia-card a {
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: #4a90e2;
-    text-decoration: none;
-  }
+.CartaMateria a {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #4a90e2;
+  text-decoration: none;
+}
   
-  .materia-card a:hover {
-    text-decoration: underline;
-  }
+.CartaMateria a:hover {
+  text-decoration: underline;
+}
   
-  .materia-card span {
-    font-size: 12px;
-    color: #999;
-  }
+.CartaMateria span {
+  font-size: 12px;
+  color: #999;
+}
   
-  #btn-nueva {
-    margin-top: 1.5rem;
-    width: 100%;
-    padding: 1rem;
-    background: #4a90e2;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 1rem;
-    cursor: pointer;
-  }
+.BotonCreacion {
+  margin-top: 1.5rem;
+  width: 100%;
+  padding: 1rem;
+  background: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+}
   
-  #btn-nueva:hover {
-    background: #357abd;
-  }
+.BotonCreacion:hover {
+  background: #357abd;
+}
   
   /* OVERLAYS Y POPUPS */
   .overlay {
