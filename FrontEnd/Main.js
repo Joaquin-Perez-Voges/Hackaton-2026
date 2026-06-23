@@ -1,3 +1,6 @@
+// Variable para trackear qué materia está seleccionada
+let materiaSeleccionada = null
+
 let textoGuardado = ''
 let nombreGuardado = ''
 
@@ -25,7 +28,7 @@ async function cargarMaterias() {
       <a href="quiz.html?id=${m.id}">${m.nombre}</a>
       <div class="card-acciones">
         <span>${cantPreguntas} preguntas · ${cantPruebas} ${cantPruebas === 1 ? 'prueba' : 'pruebas'}</span>
-        <button onclick="eliminarMateria(${m.id})" class="btn-eliminar">🗑️</button>
+        <button onclick="abrirOpciones(${m.id}, this)" class="btn-opciones">⋮</button>
       </div>
     `
     lista.appendChild(card)
@@ -77,6 +80,58 @@ const BotonCrearMateriaFinal = document.getElementById('BotonCrearMateriaFinal')
 BotonCrearMateriaFinal.addEventListener('click', function () {
   generarMateria()
 })
+
+
+function abrirOpciones(id, boton) {
+  const menu = document.getElementById('menu-opciones')
+  
+  // Si ya está abierto para la misma materia, cerrarlo
+  if (!menu.classList.contains('oculto') && materiaSeleccionada === id) {
+    menu.classList.add('oculto')
+    materiaSeleccionada = null
+    return
+  }
+
+  materiaSeleccionada = id
+  const rect = boton.getBoundingClientRect()
+  menu.style.top  = `${rect.bottom + 6}px`
+  menu.style.left = `${rect.right - 180}px`
+  menu.classList.remove('oculto')
+}
+
+// Cerrar el menú al clickear en cualquier otro lado
+document.addEventListener('click', (e) => {
+  const menu = document.getElementById('menu-opciones')
+  if (!menu.classList.contains('oculto') && !menu.contains(e.target) && !e.target.classList.contains('btn-opciones')) {
+    menu.classList.add('oculto')
+    materiaSeleccionada = null
+  }
+})
+
+
+document.getElementById('btn-eliminar-materia').addEventListener('click', async () => {
+  document.getElementById('menu-opciones').classList.add('oculto')  // ← era overlay-opciones
+  await eliminarMateria(materiaSeleccionada)
+  materiaSeleccionada = null
+})
+
+document.getElementById('btn-ver-resultados').addEventListener('click', () => {
+  document.getElementById('menu-opciones').classList.add('oculto')  // ← era overlay-opciones
+  // Por ahora no hace nada
+})
+
+document.getElementById('btn-editar-materia').addEventListener('click', async () => {
+  document.getElementById('menu-opciones').classList.add('oculto')  // ← era overlay-opciones
+
+  const res = await fetch('/api/materias')
+  const materias = await res.json()
+  const materia = materias.find(m => m.id === materiaSeleccionada)
+
+  document.getElementById('input-nombre').value = materia.nombre
+  document.getElementById('input-texto').value = materia.texto
+  document.getElementById('overlay-crear').classList.remove('oculto')
+})
+
 
 // El botón que elimina la materia
 async function eliminarMateria(id) {

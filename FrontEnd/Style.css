@@ -247,6 +247,92 @@ body {
   opacity: 0.8;
 }
 
+.btn-opciones {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  opacity: 0.3;
+  transition: opacity 0.15s;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+.btn-opciones:hover {
+  opacity: 0.9;
+}
+
+.opciones-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin: 0.5rem 0;
+}
+
+.opciones-lista button {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-m);
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--text-hi);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s;
+}
+
+.opciones-lista button:hover {
+  background: var(--accent-dim);
+}
+
+#btn-eliminar-materia {
+  color: var(--danger) !important;
+}
+
+#btn-eliminar-materia:hover {
+  background: var(--error-bg) !important;
+}
+
+#menu-opciones {
+  position: fixed;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-m);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  z-index: 200;
+  min-width: 180px;
+  overflow: hidden;
+}
+
+#menu-opciones button {
+  display: block;
+  width: 100%;
+  padding: 0.7rem 1rem;
+  background: none;
+  border: none;
+  font-size: 0.88rem;
+  font-family: inherit;
+  color: var(--text-hi);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s;
+}
+
+#menu-opciones button:hover {
+  background: var(--bg);
+}
+
+#btn-eliminar-materia {
+  color: var(--danger) !important;
+}
+
+#btn-eliminar-materia:hover {
+  background: var(--error-bg) !important;
+}
+
 /* ── Loading ─────────────────────────────────────────────────────────────── */
 .loading-inner {
   display: flex;
