@@ -35,10 +35,10 @@
   <div id="overlay-cantidad" class="overlay oculto">
     <div class="popup popup-chico">
       <h2>¿Cuántas preguntas?</h2>
-      <input type="number" id="input-cantidad" value="5"/>
+      <input type="number" id="input-cantidad" value="5" min="1" max="20"/>
       <div class="popup-botones">
-        <button id="BotonCerrarPopupPreguntas" onclick="cerrarPopupCantidad()">Cancelar</button>
-        <button id="BotonCrearMateriaFinal" onclick="generarMateria()">Crear</button>
+        <button id="BotonCerrarPopupPreguntas">Cancelar</button>
+        <button id="BotonCrearMateriaFinal">Crear</button>
       </div>
     </div>
   </div>

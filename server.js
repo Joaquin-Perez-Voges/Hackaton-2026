@@ -73,49 +73,25 @@ function parsearJSON(content) {
   }
 }
 
-// ── GET /api/materias ─────────────────────────────────────────────────────────
-app.get('/api/materias', (req, res) => {
-  try {
-    const materias = JSON.parse(fs.readFileSync(DATOS_PATH, 'utf-8'));
-    res.json(materias);
-  } catch (error) {
-    console.error('Error leyendo materias:', error);
-    res.status(500).json({ error: 'Error al leer las materias' });
-  }
-});
+// ── Helper: prompt para generar preguntas ────────────────────────────────────
+function armarPrompt(texto, cantidadPreguntas, pruebasAnteriores = []) {
+  // Armar lista de preguntas ya usadas para que la IA no las repita
+  const preguntasUsadas = pruebasAnteriores
+    .flatMap(p => p.preguntas.map(q => q.pregunta))
+    .slice(-30); // máximo últimas 30 para no saturar el contexto
 
-// ── POST /api/crear ───────────────────────────────────────────────────────────
-app.post('/api/crear', async (req, res) => {
-  // Lock: rechaza si ya hay una generación en curso
-  if (procesando) {
-    return res.status(429).json({ error: 'Ya hay una materia siendo procesada, esperá un momento.' });
-  }
+  const avisoRepeticion = preguntasUsadas.length > 0
+    ? `\nIMPORTANTE: Ya se generaron estas preguntas antes, NO las repitas:\n${preguntasUsadas.map((q, i) => `${i + 1}. ${q}`).join('\n')}\n`
+    : '';
 
-  const { nombre, texto, cantidadPreguntas } = req.body;
-
-  if (!nombre || !texto || !cantidadPreguntas) {
-    return res.status(400).json({ error: 'Faltan campos: nombre, texto, cantidadPreguntas' });
-  }
-
-  // Verificar duplicado exacto (mismo nombre Y mismo texto)
-  const materiasActuales = JSON.parse(fs.readFileSync(DATOS_PATH, 'utf-8'));
-  const duplicado = materiasActuales.find(
-    m => m.nombre === nombre && m.texto === texto
-  );
-  if (duplicado) {
-    return res.status(409).json({ error: 'Ya existe una materia con ese nombre y texto.' });
-  }
-
-  procesando = true;
-
-  const prompt = `Actuá como un experto en pedagogía y procesamiento de datos. Tu tarea es procesar el texto que te proporcionaré al final según las siguientes instrucciones estrictas:
+  return `Actuá como un experto en pedagogía y procesamiento de datos. Tu tarea es procesar el texto que te proporcionaré al final según las siguientes instrucciones estrictas:
 
 1. RESUMEN: Extraé las ideas principales de forma concisa.
 2. PREGUNTAS: Generá exactamente ${cantidadPreguntas} preguntas de opción múltiple basadas únicamente en el texto.
    - Cada pregunta debe tener exactamente 4 opciones (A, B, C, D).
    - Solo una opción debe ser correcta.
    - Evitá opciones ambiguas.
-
+${avisoRepeticion}
 3. FORMATO DE SALIDA: Tu respuesta debe ser EXCLUSIVAMENTE un objeto JSON válido. 
    - NO incluyas texto de introducción ni de cierre.
    - NO uses bloques de código con triples comillas invertidas.
@@ -141,19 +117,57 @@ Respetá estrictamente la siguiente estructura de datos:
 Nota: El campo "correcta" debe ser un número entero que represente el índice (0 para A, 1 para B, 2 para C, 3 para D) de la respuesta correcta.
 
 TEXTO A PROCESAR:${texto}`;
+}
+
+// ── GET /api/materias ─────────────────────────────────────────────────────────
+app.get('/api/materias', (req, res) => {
+  try {
+    const materias = JSON.parse(fs.readFileSync(DATOS_PATH, 'utf-8'));
+    res.json(materias);
+  } catch (error) {
+    console.error('Error leyendo materias:', error);
+    res.status(500).json({ error: 'Error al leer las materias' });
+  }
+});
+
+// ── POST /api/crear ───────────────────────────────────────────────────────────
+// Crea la materia y guarda la primera prueba en pruebas[0]
+app.post('/api/crear', async (req, res) => {
+  if (procesando) {
+    return res.status(429).json({ error: 'Ya hay una materia siendo procesada, esperá un momento.' });
+  }
+
+  const { nombre, texto, cantidadPreguntas } = req.body;
+
+  if (!nombre || !texto || !cantidadPreguntas) {
+    return res.status(400).json({ error: 'Faltan campos: nombre, texto, cantidadPreguntas' });
+  }
+
+  const materiasActuales = JSON.parse(fs.readFileSync(DATOS_PATH, 'utf-8'));
+  const duplicado = materiasActuales.find(m => m.nombre === nombre && m.texto === texto);
+  if (duplicado) {
+    return res.status(409).json({ error: 'Ya existe una materia con ese nombre y texto.' });
+  }
+
+  procesando = true;
 
   try {
-    const contenidoIA = await llamarIA(prompt);
+    const contenidoIA = await llamarIA(armarPrompt(texto, cantidadPreguntas));
     const resultado   = parsearJSON(contenidoIA);
 
-    // Leer el archivo de nuevo justo antes de escribir (por si cambió)
     const materias = JSON.parse(fs.readFileSync(DATOS_PATH, 'utf-8'));
     const nuevaMateria = {
       id: Date.now(),
       nombre,
       texto,
-      resumen:   resultado.resumen,
-      preguntas: resultado.preguntas
+      resumen: resultado.resumen,
+      pruebas: [
+        {
+          id: 1,
+          fecha: new Date().toISOString(),
+          preguntas: resultado.preguntas
+        }
+      ]
     };
 
     materias.push(nuevaMateria);
@@ -165,7 +179,52 @@ TEXTO A PROCESAR:${texto}`;
     console.error('Error al generar preguntas:', error.message);
     res.status(500).json({ error: error.message || 'Error al generar preguntas' });
   } finally {
-    procesando = false; // siempre libera el lock
+    procesando = false;
+  }
+});
+
+// ── POST /api/materias/:id/prueba ─────────────────────────────────────────────
+// Genera una nueva prueba para una materia ya existente y la agrega a pruebas[]
+app.post('/api/materias/:id/prueba', async (req, res) => {
+  if (procesando) {
+    return res.status(429).json({ error: 'Ya hay una prueba siendo generada, esperá un momento.' });
+  }
+
+  const id = Number(req.params.id);
+  const { cantidadPreguntas = 5 } = req.body;
+
+  const materias = JSON.parse(fs.readFileSync(DATOS_PATH, 'utf-8'));
+  const idx = materias.findIndex(m => m.id === id);
+
+  if (idx === -1) {
+    return res.status(404).json({ error: 'Materia no encontrada' });
+  }
+
+  procesando = true;
+  const materia = materias[idx];
+
+  try {
+    // Pasa las pruebas anteriores para que la IA no repita preguntas
+    const contenidoIA = await llamarIA(armarPrompt(materia.texto, cantidadPreguntas, materia.pruebas));
+    const resultado   = parsearJSON(contenidoIA);
+
+    const nuevaPrueba = {
+      id: materia.pruebas.length + 1,
+      fecha: new Date().toISOString(),
+      preguntas: resultado.preguntas
+    };
+
+    materia.pruebas.push(nuevaPrueba);
+    materias[idx] = materia;
+    fs.writeFileSync(DATOS_PATH, JSON.stringify(materias, null, 2), 'utf-8');
+
+    res.json(nuevaPrueba);
+
+  } catch (error) {
+    console.error('Error al generar prueba:', error.message);
+    res.status(500).json({ error: error.message || 'Error al generar prueba' });
+  } finally {
+    procesando = false;
   }
 });
 

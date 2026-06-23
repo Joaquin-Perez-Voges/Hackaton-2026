@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Quiz</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="Style.css">
 </head>
 <body>
 
@@ -12,10 +12,19 @@
     <h2 id="quiz-titulo"></h2>
   </div>
 
-    <form id="quiz-form"></form>
+  <!-- LOADING mientras genera nueva prueba -->
+  <div id="overlay-loading" class="overlay oculto">
+    <div class="popup-chico" style="text-align: center;">
+      <p>⏳ Generando nueva prueba...</p>
+    </div>
+  </div>
 
+  <div id="quiz-contenido" class="oculto">
+    <p id="quiz-info" class="quiz-info"></p>
+    <form id="quiz-form"></form>
     <button onclick="corregir()" id="btn-corregir">Ver resultados</button>
     <div id="quiz-resultado" class="oculto resultado-final"></div>
+    <button onclick="nuevaPrueba()" id="btn-nueva-prueba" class="oculto">🔄 Nueva prueba</button>
   </div>
 
   <script src="quiz.js"></script>
