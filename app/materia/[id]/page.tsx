@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { MateriaVista } from "@/components/materia-vista";
+import { QuizRunner } from "@/components/quiz-runner";
+import { TutorFab } from "@/components/tutor-fab";
 import { Button } from "@/components/ui/button";
 import { obtenerMateria } from "@/lib/db/queries";
 
@@ -24,7 +25,8 @@ export default async function MateriaPage(props: {
         </h1>
       </div>
 
-      <MateriaVista materia={materia} />
+      <QuizRunner materia={materia} />
+      <TutorFab materiaId={materia.id} />
     </main>
   );
 }

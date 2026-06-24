@@ -4,7 +4,6 @@ import { useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { generarNuevaPrueba, guardarResultado } from "@/app/actions";
 import { Button } from "@/components/ui/button";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import type { MateriaConPruebas, Prueba } from "@/lib/db/schema";
 import { cn } from "@/lib/utils";
 
@@ -16,47 +15,33 @@ export function QuizRunner({ materia }: { materia: MateriaConPruebas }) {
   );
 
   const [prueba, setPrueba] = useState<Prueba | null>(pruebaInicial);
-  const [respuestas, setRespuestas] = useState<Record<number, number>>({});
-  const [corregida, setCorregida] = useState(false);
-  const [resultado, setResultado] = useState<{
-    correctas: number;
-    total: number;
-  } | null>(null);
+  const [idx, setIdx] = useState(0);
+  const [seleccion, setSeleccion] = useState<number | null>(null);
+  const [checked, setChecked] = useState(false);
+  const [correctas, setCorrectas] = useState(0);
+  const [terminado, setTerminado] = useState(false);
   const [generando, startGen] = useTransition();
   const [, startSave] = useTransition();
 
-  function nuevaPrueba() {
+  const nuevaPrueba = () => {
     startGen(async () => {
       const res = await generarNuevaPrueba(materia.id);
       if (res.ok) {
         setPrueba(res.prueba);
-        setRespuestas({});
-        setCorregida(false);
-        setResultado(null);
+        setIdx(0);
+        setSeleccion(null);
+        setChecked(false);
+        setCorrectas(0);
+        setTerminado(false);
       } else {
         toast.error(res.error);
       }
     });
-  }
-
-  function corregir() {
-    if (!prueba) return;
-    let correctas = 0;
-    prueba.preguntas.forEach((q, i) => {
-      if (respuestas[i] === q.correcta) correctas++;
-    });
-    const total = prueba.preguntas.length;
-    setResultado({ correctas, total });
-    setCorregida(true);
-    const pruebaId = prueba.id;
-    startSave(async () => {
-      await guardarResultado(materia.id, pruebaId, correctas, total);
-    });
-  }
+  };
 
   if (!prueba) {
     return (
-      <div className="rounded-xl bg-muted/40 px-4 py-10 text-center">
+      <div className="rounded-2xl bg-muted/40 px-4 py-10 text-center">
         <p className="mb-4 text-sm text-muted-foreground">
           No hay una prueba pendiente. Generá una nueva para practicar.
         </p>
@@ -67,71 +52,136 @@ export function QuizRunner({ materia }: { materia: MateriaConPruebas }) {
     );
   }
 
-  const pct = resultado
-    ? Math.round((resultado.correctas / resultado.total) * 100)
-    : 0;
-  const emoji = pct === 100 ? "🎉" : pct >= 60 ? "👍" : "📚";
+  const preguntas = prueba.preguntas;
+  const total = preguntas.length;
+
+  // Pantalla de resultado final.
+  if (terminado) {
+    const pct = Math.round((correctas / total) * 100);
+    const emoji = pct === 100 ? "🎉" : pct >= 60 ? "👍" : "📚";
+    return (
+      <div className="space-y-4 text-center">
+        <div className="rounded-2xl bg-card p-8 ring-1 ring-foreground/10">
+          <div className="text-5xl">{emoji}</div>
+          <p className="mt-3 text-2xl font-bold">
+            {correctas} de {total}
+          </p>
+          <p className="text-sm text-muted-foreground">{pct}% correctas</p>
+        </div>
+        <Button
+          size="lg"
+          className="w-full"
+          onClick={nuevaPrueba}
+          disabled={generando}
+        >
+          {generando ? "Generando…" : "↺ Nueva prueba"}
+        </Button>
+      </div>
+    );
+  }
+
+  const q = preguntas[idx];
+  const esCorrecta = seleccion != null && seleccion === q.correcta;
+  const progreso = Math.round((idx / total) * 100);
+
+  const comprobar = () => {
+    if (seleccion == null) return;
+    setChecked(true);
+    if (seleccion === q.correcta) setCorrectas((c) => c + 1);
+  };
+
+  const continuar = () => {
+    if (idx + 1 < total) {
+      setIdx(idx + 1);
+      setSeleccion(null);
+      setChecked(false);
+      return;
+    }
+    // Última pregunta → guardar resultado y mostrar pantalla final.
+    setTerminado(true);
+    const pruebaId = prueba.id;
+    const final = correctas;
+    startSave(async () => {
+      await guardarResultado(materia.id, pruebaId, final, total);
+    });
+  };
 
   return (
-    <div className="space-y-4">
-      <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
-        {prueba.preguntas.length} preguntas
-      </p>
-
-      {prueba.preguntas.map((q, i) => (
-        <div
-          key={i}
-          className="rounded-xl bg-card p-5 ring-1 ring-foreground/10"
-        >
-          <p className="mb-3 font-medium">
-            {i + 1}. {q.pregunta}
-          </p>
-          <RadioGroup
-            value={respuestas[i] != null ? String(respuestas[i]) : null}
-            onValueChange={(v) =>
-              setRespuestas((r) => ({ ...r, [i]: Number(v) }))
-            }
-            disabled={corregida}
-          >
-            {q.opciones.map((op, oi) => {
-              const esCorrecta = corregida && oi === q.correcta;
-              const esElegidaMal =
-                corregida && respuestas[i] === oi && oi !== q.correcta;
-              return (
-                <label
-                  key={oi}
-                  className={cn(
-                    "flex cursor-pointer items-center gap-3 rounded-lg border border-border p-3 text-sm transition",
-                    !corregida && "hover:bg-muted/50",
-                    esCorrecta &&
-                      "border-green-600/50 bg-green-50 text-green-800",
-                    esElegidaMal && "border-red-600/50 bg-red-50 text-red-800"
-                  )}
-                >
-                  <RadioGroupItem value={String(oi)} />
-                  <span>{op}</span>
-                </label>
-              );
-            })}
-          </RadioGroup>
+    <div className="space-y-5">
+      {/* Barra de progreso */}
+      <div className="flex items-center gap-3">
+        <div className="h-3 flex-1 overflow-hidden rounded-full bg-muted">
+          <div
+            className="h-full rounded-full bg-primary transition-all duration-300"
+            style={{ width: `${progreso}%` }}
+          />
         </div>
-      ))}
+        <span className="text-xs font-medium text-muted-foreground">
+          {idx + 1}/{total}
+        </span>
+      </div>
 
-      {corregida && resultado ? (
-        <div className="space-y-3 text-center">
-          <div className="rounded-xl bg-card p-5 text-lg ring-1 ring-foreground/10">
-            {emoji} {resultado.correctas} de {resultado.total} correctas ({pct}%)
+      {/* Pregunta */}
+      <p className="text-lg font-semibold leading-snug">{q.pregunta}</p>
+
+      {/* Opciones */}
+      <div className="space-y-2.5">
+        {q.opciones.map((op, oi) => {
+          const selected = seleccion === oi;
+          const showCorrect = checked && oi === q.correcta;
+          const showWrong = checked && selected && oi !== q.correcta;
+          return (
+            <button
+              key={oi}
+              type="button"
+              disabled={checked}
+              onClick={() => setSeleccion(oi)}
+              className={cn(
+                "w-full rounded-2xl border-2 p-4 text-left text-sm font-medium transition",
+                !checked && selected && "border-primary bg-primary/5",
+                !checked && !selected && "border-border hover:bg-muted/50",
+                showCorrect && "border-green-500 bg-green-50 text-green-800",
+                showWrong && "border-red-500 bg-red-50 text-red-800",
+                checked &&
+                  !showCorrect &&
+                  !showWrong &&
+                  "border-border opacity-60"
+              )}
+            >
+              {op}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Feedback + acción */}
+      {checked ? (
+        <div className="space-y-3">
+          <div
+            className={cn(
+              "rounded-xl p-3 text-sm font-medium",
+              esCorrecta
+                ? "bg-green-50 text-green-800"
+                : "bg-red-50 text-red-800"
+            )}
+          >
+            {esCorrecta
+              ? "¡Correcto! 🎉"
+              : `Incorrecto. La respuesta era: ${q.opciones[q.correcta]}`}
           </div>
-          <Button variant="outline" onClick={nuevaPrueba} disabled={generando}>
-            {generando ? "Generando…" : "↺ Nueva prueba"}
+          <Button size="lg" className="w-full" onClick={continuar}>
+            {idx + 1 < total ? "Continuar" : "Ver resultado"}
           </Button>
         </div>
       ) : (
-        <div className="text-center">
-          <Button onClick={corregir} size="lg">
-            Ver resultados
-          </Button>
-        </div>
+        <Button
+          size="lg"
+          className="w-full"
+          onClick={comprobar}
+          disabled={seleccion == null}
+        >
+          Comprobar
+        </Button>
       )}
     </div>
   );
