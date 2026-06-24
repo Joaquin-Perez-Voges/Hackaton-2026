@@ -263,6 +263,30 @@ if (btnVerResultados) btnVerResultados.addEventListener('click', async () => {
         lista.appendChild(diffDiv)
       }
 
+      // Diferencia con la prueba anterior
+      if (i > 0) {
+        const anterior = pruebasRealizadas[i - 1]
+        const pctAnterior = (anterior.correctas / anterior.total) * 100
+        const pctActual   = (prueba.correctas / prueba.total) * 100
+        const diff        = Math.round(pctActual - pctAnterior)
+
+        const diffDiv = document.createElement('div')
+        diffDiv.className = 'resultado-diff'
+
+        if (diff > 0) {
+          diffDiv.textContent = `▲ Mejoraste un ${diff}% respecto a la prueba anterior`
+          diffDiv.style.color = '#27ae60'
+        } else if (diff < 0) {
+          diffDiv.textContent = `▼ Bajaste un ${Math.abs(diff)}% respecto a la prueba anterior`
+          diffDiv.style.color = '#e74c3c'
+        } else {
+          diffDiv.textContent = `— No tuviste cambios respecto a la prueba anterior`
+          diffDiv.style.color = '#999'
+        }
+
+        lista.appendChild(diffDiv)
+      }
+
       lista.appendChild(fila)
     })
     if (pruebasRealizadas.length > 0) {
@@ -309,6 +333,7 @@ if (btnEditarMateria) btnEditarMateria.addEventListener('click', async () => {
 })
 
 
+ // Función para eliminar una materia por su ID
  // Función para eliminar una materia por su ID
 async function eliminarMateria(id) {
   await fetch(`/api/materias/${id}`, { method: 'DELETE' })

@@ -1,0 +1,114 @@
+:root{
+    --bg: #fff;
+    --muted: #f6f7fb;
+    --accent: #2b6ef6;
+    --text: #0f1724;
+    --text-mid: #64748b;
+    --surface: #ffffff;
+  }
+  
+  body {
+    font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: var(--muted);
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+  }
+  
+  .app-shell {
+    display: flex;
+    min-height: 100vh;
+  }
+  
+  /* Sidebar */
+  .sidebar {
+    width: 220px;
+    background: linear-gradient(180deg,#ffffff,#fbfdff);
+    border-right: 1px solid rgba(15,23,36,0.06);
+    padding: 22px;
+    box-sizing: border-box;
+  }
+  .sidebar-title {
+    margin: 0 0 12px 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .sidebar-btn {
+    text-align: left;
+    background: transparent;
+    border: none;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text-mid);
+    font-weight: 500;
+  }
+  .sidebar-btn.active {
+    background: rgba(43,110,246,0.08);
+    color: var(--accent);
+    box-shadow: 0 1px 0 rgba(15,23,36,0.03) inset;
+  }
+  
+  /* Main content */
+  .main-content {
+    flex: 1;
+    padding: 28px;
+    box-sizing: border-box;
+  }
+  
+  /* Oculto helper */
+  .oculto { display: none; }
+  
+  /* Resumen view specific */
+  .container-resumen {
+    max-width: 900px;
+  }
+  .resumen-form label {
+    display:block;
+    margin-top: 12px;
+    margin-bottom:6px;
+    font-weight:500;
+  }
+  .resumen-form textarea, .resumen-form select {
+    width:100%;
+    padding: 10px 12px;
+    border: 1px solid #e6eefb;
+    border-radius: 8px;
+    background: #fff;
+    box-sizing: border-box;
+  }
+  .confirm-row {
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-top:10px;
+  }
+  .BotonCreacion {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor:pointer;
+    margin-top: 12px;
+  }
+  
+  /* Resumen result */
+  .resumen-resultado {
+    margin-top: 18px;
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 12px;
+    border: 1px solid rgba(15,23,36,0.04);
+  }
+  .resumen-salida {
+    white-space: pre-wrap;
+    line-height: 1.45;
+    color: var(--text);
+    margin-bottom: 8px;
+  }

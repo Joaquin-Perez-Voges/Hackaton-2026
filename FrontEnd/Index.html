@@ -1,49 +1,64 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>EduAssist IA</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="Style.css">
+  <link rel="stylesheet" href="sidebar.css">
 </head>
 <body>
 
-  <div class="container">
-    <h1 class="TituloPrincipal">NextSelf</h1>
-    <p class="SubtituloPrincipal">Estudiá con IA para superarte cada día.</p>
-
-    <div id="lista-materias"></div>
-
-    <button class="BotonCreacion" id="btn-nuevo">+ Nueva materia</button>
-  </div>
-
-  <!-- POPUP nombre y texto -->
-  <div id="overlay-crear" class="overlay oculto">
-    <div class="popup">
-      <h2>Nueva materia</h2>
-      <input type="text" id="input-nombre" placeholder="Nombre de la materia" autocomplete="off" />
-      <textarea id="input-texto" placeholder="Pegá el texto a estudiar…"></textarea>
-      <div class="popup-botones">
-        <button id="BotonCerrarPopup">Cancelar</button>
-        <button id="BotonAbrePanelPreguntas">Continuar</button>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <h2 class="sidebar-title">NextSelf</h2>
+      <nav class="sidebar-nav">
+        <button id="nav-mis-materias" class="sidebar-btn active">📚 Mis materias</button>
+        <button id="nav-hacer-resumen" class="sidebar-btn">✂️ Hacer resumen</button>
+      </nav>
+      <div class="sidebar-footer">
+        <small>Estudiá con IA para superarte cada día.</small>
       </div>
-    </div>
-  </div>
+    </aside>
 
-  <!-- POPUP cantidad de preguntas -->
-  <div id="overlay-cantidad" class="overlay oculto">
-    <div class="popup popup-chico">
-      <h2>¿Cuántas preguntas?</h2>
-      <input type="number" id="input-cantidad" value="5" min="1" max="20" />
-      <div class="popup-botones">
-        <button id="BotonCerrarPopupPreguntas">Cancelar</button>
-        <button id="BotonCrearMateria">Crear</button>
-      </div>
-    </div>
-  </div>
+    <main class="main-content">
+      <!-- VISTA: Mis materias (tu contenedor original) -->
+      <section id="view-materias" class="view">
+        <div class="container">
+          <h1 class="TituloPrincipal">NextSelf</h1>
+          <p class="SubtituloPrincipal">Estudiá con IA para superarte cada día.</p>
+
+          <div id="lista-materias"></div>
+
+          <button class="BotonCreacion" id="btn-nuevo">+ Nueva materia</button>
+        </div>
+
+        <!-- POPUPS y overlays (los mantengo igual que tenías) -->
+        <div id="overlay-crear" class="overlay oculto">
+          <div class="popup">
+            <h2>Nueva materia</h2>
+            <input type="text" id="input-nombre" placeholder="Nombre de la materia" autocomplete="off" />
+            <textarea id="input-texto" placeholder="Pegá el texto a estudiar…"></textarea>
+            <div class="popup-botones">
+              <button id="BotonCerrarPopup">Cancelar</button>
+              <button id="BotonAbrePanelPreguntas">Continuar</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="overlay-cantidad" class="overlay oculto">
+          <div class="popup popup-chico">
+            <h2>¿Cuántas preguntas?</h2>
+            <input type="number" id="input-cantidad" value="5" min="1" max="20" />
+            <div class="popup-botones">
+              <button id="BotonCerrarPopupPreguntas">Cancelar</button>
+              <button id="BotonCrearMateria">Crear</button>
+            </div>
+          </div>
+        </div>
 
   <!-- POPUP opciones de materia -->
   <div id="menu-opciones" class="oculto">
@@ -52,34 +67,81 @@
     <button id="btn-eliminar-materia">🗑️ Eliminar</button>
   </div>
 
-<!-- POPUP resultados de la materia -->
-<div id="overlay-resultados" class="overlay oculto">
-  <div class="popup">
-    <h2 id="resultados-titulo"></h2>
-    <div id="resultados-lista"></div>
-    <div class="popup-botones">
-      <button id="btn-cerrar-resultados">Cerrar</button>
-    </div>
-  </div>
-</div>
+        <div id="overlay-resultados" class="overlay oculto">
+          <div class="popup">
+            <h2 id="resultados-titulo"></h2>
+            <div id="resultados-lista"></div>
+            <div class="popup-botones">
+              <button id="btn-cerrar-resultados">Cerrar</button>
+            </div>
+          </div>
+        </div>
 
-  <!-- LOADING -->
-  <div id="overlay-loading" class="overlay oculto">
-    <div class="popup popup-chico">
-      <div class="loading-inner">
-        <div class="spinner"></div>
-        <p>Generando preguntas…</p>
-      </div>
-    </div>
-  </div>
+        <div id="overlay-loading" class="overlay oculto">
+          <div class="popup popup-chico">
+            <div class="loading-inner">
+              <div class="spinner"></div>
+              <p>Generando preguntas…</p>
+            </div>
+          </div>
+        </div>
 
-  <div id="overlay-alerta" class="overlay oculto">
-    <div class="popup popup-chico">
-      <p id="alerta-mensaje" style="font-size: 0.9rem; color: var(--text-mid);">texto</p>
-      <div class="popup-botones">
-        <button id="btn-cerrar-alerta">Aceptar</button>
-      </div>
-    </div>
+        <div id="overlay-alerta" class="overlay oculto">
+          <div class="popup popup-chico">
+            <p id="alerta-mensaje" style="font-size: 0.9rem; color: var(--text-mid);">texto</p>
+            <div class="popup-botones">
+              <button id="btn-cerrar-alerta">Aceptar</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VISTA: Hacer resumen -->
+      <section id="view-resumen" class="view oculto">
+        <div class="container container-resumen">
+          <h1 class="TituloPrincipal">Hacer resumen</h1>
+          <p class="SubtituloPrincipal">Pide un resumen claro y conciso. Este asistente solo procesa pedidos de resumen.</p>
+
+          <div class="resumen-form">
+            <label for="resumen-texto">Texto a resumir</label>
+            <textarea id="resumen-texto" placeholder="Pega aquí el texto, o escribe lo que querés que se resuma..." rows="8"></textarea>
+
+            <label for="resumen-longitud">Longitud del resumen</label>
+            <select id="resumen-longitud">
+              <option value="breve">Breve (1-3 frases)</option>
+              <option value="medio" selected>Medio (1-2 párrafos)</option>
+              <option value="largo">Largo (resumen detallado)</option>
+            </select>
+
+            <!-- La casilla de confirmación fue removida -->
+
+            <div class="popup-botones">
+              <button id="btn-enviar-resumen" class="BotonCreacion">Pedir resumen</button>
+            </div>
+
+            <div id="resumen-resultado" class="resumen-resultado oculto">
+              <h3>Resumen</h3>
+              <div id="resumen-texto-salida" class="resumen-salida"></div>
+              <div class="popup-botones">
+                <button id="btn-copiar-resumen">Copiar</button>
+                <button id="btn-nuevo-resumen">Nuevo</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div id="overlay-loading-resumen" class="overlay oculto">
+          <div class="popup popup-chico">
+            <div class="loading-inner">
+              <div class="spinner"></div>
+              <p>Generando resumen…</p>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </main>
   </div>
 
   <script src="Main.js"></script>
