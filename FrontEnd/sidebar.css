@@ -82,12 +82,6 @@
     background: #fff;
     box-sizing: border-box;
   }
-  .confirm-row {
-    display:flex;
-    align-items:center;
-    gap:8px;
-    margin-top:10px;
-  }
   .BotonCreacion {
     background: var(--accent);
     color: #fff;
@@ -97,6 +91,18 @@
     cursor:pointer;
     margin-top: 12px;
   }
+  
+  /* Overlays - asegúrate que se vean encima */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10,10,10,0.35);
+    z-index: 9999;
+  }
+  .popup { background: #fff; padding: 18px; border-radius: 10px; max-width: 720px; width: 100%; box-sizing:border-box; }
   
   /* Resumen result */
   .resumen-resultado {
