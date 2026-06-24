@@ -85,7 +85,7 @@ function renderizarPrueba() {
   document.getElementById('quiz-contenido').classList.remove('oculto')
 }
 
-function corregir() {
+ async function corregir() {
   let correctas = 0
   const total   = pruebaActual.preguntas.length
 
@@ -118,6 +118,12 @@ function corregir() {
 
   document.getElementById('btn-corregir').style.display = 'none'
   document.getElementById('btn-nueva-prueba').classList.remove('oculto')
+  
+  await fetch(`/api/materias/${materiaActual.id}/pruebas/${pruebaActual.id}/resultado`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ correctas, total })
+  });
 }
 
 async function nuevaPrueba() {

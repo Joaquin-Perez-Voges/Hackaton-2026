@@ -127,9 +127,49 @@ document.getElementById('btn-eliminar-materia').addEventListener('click', async 
   materiaSeleccionada = null
 })
 // Ver resultados de la materia (idea futuro)
-document.getElementById('btn-ver-resultados').addEventListener('click', () => {
-  document.getElementById('menu-opciones').classList.add('oculto')  // ← era overlay-opciones
-  // Por ahora no hace nada
+document.getElementById('btn-ver-resultados').addEventListener('click', async () => {
+  document.getElementById('menu-opciones').classList.add('oculto')
+
+  const res = await fetch('/api/materias')
+  const materias = await res.json()
+  const materia = materias.find(m => m.id === materiaSeleccionada)
+
+  document.getElementById('resultados-titulo').textContent = `📊 ${materia.nombre}`
+
+  const lista = document.getElementById('resultados-lista')
+  lista.innerHTML = ''
+
+  // Solo mostrar pruebas que ya fueron corregidas
+  const pruebasRealizadas = materia.pruebas.filter(p => p.correctas !== undefined)
+
+  if (pruebasRealizadas.length === 0) {
+    lista.innerHTML = '<p style="color:#999; text-align:center;">Todavía no hay pruebas realizadas.</p>'
+  } else {
+    pruebasRealizadas.forEach((prueba, i) => {
+      // Formatear fecha: "2026-06-24T12:29:33.091Z" → "24/06/2026"
+      const fecha = prueba.fecha
+        ? new Date(prueba.fecha).toLocaleDateString('es-AR')
+        : 'Sin fecha'
+
+      const pct   = Math.round((prueba.correctas / prueba.total) * 100)
+      const emoji = pct === 100 ? '🎉' : pct >= 60 ? '👍' : '📚'
+
+      const fila = document.createElement('div')
+      fila.className = 'resultado-fila'
+      fila.innerHTML = `
+        <span>${emoji} Prueba ${i + 1} — ${fecha}</span>
+        <span class="resultado-nota">${prueba.correctas} de ${prueba.total}</span>
+      `
+      lista.appendChild(fila)
+    })
+  }
+
+  document.getElementById('btn-cerrar-resultados').addEventListener('click', () => {
+    document.getElementById('overlay-resultados').classList.add('oculto')
+  })
+
+  document.getElementById('overlay-resultados').classList.remove('oculto')
+  materiaSeleccionada = null
 })
 // Edita la materia
 document.getElementById('btn-editar-materia').addEventListener('click', async () => {
@@ -165,7 +205,7 @@ async function generarMateria() {
   // Cierra el popup de cantidad de preguntas y muestra el overlay de carga fachero
   cerrarPopups()
   await new Promise(r => setTimeout(r, 50))
-  document.getElementById('overlay-loading').classList.remove('oculto')
+  document.getElementById('overlay-loading').classList.remove('oculto')|
   await new Promise(r => setTimeout(r, 50))
 
   // Llama a la API para crear la materia y su primera prueba

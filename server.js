@@ -246,5 +246,37 @@ app.delete('/api/materias/:id', (req, res) => {
   }
 });
 
+// ── PATCH /api/materias/:id/pruebas/:pruebaId/resultado ───────────────────────
+// Guarda el resultado (correctas y total) de una prueba ya realizada
+app.patch('/api/materias/:id/pruebas/:pruebaId/resultado', (req, res) => {
+  try {
+    const id       = Number(req.params.id);
+    const pruebaId = Number(req.params.pruebaId);
+    const { correctas, total } = req.body;
+
+    if (correctas === undefined || total === undefined) {
+      return res.status(400).json({ error: 'Faltan campos: correctas, total' });
+    }
+
+    const materias = JSON.parse(fs.readFileSync(DATOS_PATH, 'utf-8'));
+    const materia  = materias.find(m => m.id === id);
+    if (!materia) return res.status(404).json({ error: 'Materia no encontrada' });
+
+    const prueba = materia.pruebas.find(p => p.id === pruebaId);
+    if (!prueba) return res.status(404).json({ error: 'Prueba no encontrada' });
+
+    prueba.correctas = correctas;
+    prueba.total     = total;
+    prueba.fecha     = new Date().toISOString().split('T')[0]; // "2026-06-24"
+
+    fs.writeFileSync(DATOS_PATH, JSON.stringify(materias, null, 2), 'utf-8');
+    res.json({ ok: true });
+
+  } catch (error) {
+    console.error('Error guardando resultado:', error);
+    res.status(500).json({ error: 'Error al guardar el resultado' });
+  }
+});
+
 // ── Inicio ────────────────────────────────────────────────────────────────────
 app.listen(3000, () => console.log('✅ Servidor corriendo en http://localhost:3000'));
