@@ -213,7 +213,7 @@ if (btnVerResultados) btnVerResultados.addEventListener('click', async () => {
   const materias = await res.json()
   const materia = materias.find(m => m.id === materiaSeleccionada)
 
-  document.getElementById('resultados-titulo').textContent = `📊 ${materia.nombre}`
+  document.getElementById('resultados-titulo').textContent = `${materia.nombre}`
 
   const lista = document.getElementById('resultados-lista')
   lista.innerHTML = ''
@@ -231,7 +231,7 @@ if (btnVerResultados) btnVerResultados.addEventListener('click', async () => {
         : 'Sin fecha'
 
       const pct   = Math.round((prueba.correctas / prueba.total) * 100)
-      const emoji = pct === 100 ? '🎉' : pct >= 60 ? '👍' : '📚'
+      const emoji = pct === 100 ? '' : pct >= 60 ? '' : ''
 
       const fila = document.createElement('div')
       fila.className = 'resultado-fila'
@@ -293,7 +293,7 @@ if (btnVerResultados) btnVerResultados.addEventListener('click', async () => {
       const promedio = Math.round(
         pruebasRealizadas.reduce((acc, p) => acc + (p.correctas / p.total) * 100, 0) / pruebasRealizadas.length
       )
-      const emoji = promedio === 100 ? '🎉' : promedio >= 60 ? '👍' : '📚'
+      const emoji = promedio === 100 ? '' : promedio >= 60 ? '' : ''
     
       const hr = document.createElement('hr')
       hr.style.cssText = 'border: none; border-top: 1px solid #e0e0e0; margin: 1rem 0;'
