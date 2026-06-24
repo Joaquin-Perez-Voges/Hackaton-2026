@@ -605,3 +605,41 @@ body {
   font-weight: 600;
   color: #333;
 }
+
+/* El overlay debe cubrir toda la pantalla y permitir scroll si el popup es muy alto */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* O el color de fondo que tengas */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  overflow-y: auto; /* Permite scroll vertical en pantallas chicas si el popup excede el alto */
+  padding: 20px;    /* Margen de seguridad */
+}
+
+/* El popup de resultados (o los popups en general) */
+.popup {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 24px;
+  max-width: 500px;
+  width: 100%;
+  
+  /* CLAVE PARA EL SCROLL INTERNO */
+  max-height: 80vh;          /* No permite que el popup ocupe más del 80% del alto de la pantalla */
+  display: flex;
+  flex-direction: column;    /* Alínea el título, el contenido y los botones en vertical */
+}
+
+/* El contenedor específico de la lista de resultados */
+#resultados-lista {
+  flex: 1;                   /* Ocupa todo el espacio disponible entre el título y los botones */
+  overflow-y: auto;          /* ¡MÁGIA! Activa la barra de desplazamiento solo para los resultados */
+  margin-bottom: 16px;       /* Despegado de los botones inferiores */
+  padding-right: 8px;        /* Espacio para que la barra no tape el texto */
+}
