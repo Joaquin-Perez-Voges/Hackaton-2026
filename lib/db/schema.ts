@@ -7,6 +7,9 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
+import { user } from "./auth-schema";
+
+export * from "./auth-schema";
 
 /** Una pregunta de opción múltiple generada por la IA. */
 export type Pregunta = {
@@ -18,6 +21,9 @@ export type Pregunta = {
 /** Materia: un tema de estudio con su texto fuente y resumen. */
 export const materias = pgTable("materias", {
   id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
   nombre: text("nombre").notNull(),
   texto: text("texto").notNull(),
   resumen: text("resumen").notNull(),

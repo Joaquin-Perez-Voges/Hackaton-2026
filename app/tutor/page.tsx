@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import { TutorChat } from "@/components/tutor-chat";
+import { requireSession } from "@/lib/session";
 
 export const metadata: Metadata = { title: "Tutor — NextSelf" };
 
-export default function TutorPage() {
+export default async function TutorPage() {
+  await requireSession();
+
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col px-6 py-8 md:py-10">
       <header className="mb-5">

@@ -4,14 +4,16 @@ import { QuizRunner } from "@/components/quiz-runner";
 import { TutorFab } from "@/components/tutor-fab";
 import { Button } from "@/components/ui/button";
 import { obtenerMateria } from "@/lib/db/queries";
+import { requireSession } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
 export default async function MateriaPage(props: {
   params: Promise<{ id: string }>;
 }) {
+  const session = await requireSession();
   const { id } = await props.params;
-  const materia = await obtenerMateria(id);
+  const materia = await obtenerMateria(id, session.user.id);
   if (!materia) notFound();
 
   return (

@@ -1,4 +1,4 @@
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { db } from "./index";
 import {
   type MateriaConPruebas,
@@ -8,9 +8,15 @@ import {
   pruebas,
 } from "./schema";
 
-/** Lista todas las materias (más nuevas primero) con sus pruebas embebidas. */
-export async function listarMaterias(): Promise<MateriaConPruebas[]> {
-  const ms = await db.select().from(materias).orderBy(desc(materias.createdAt));
+/** Lista las materias del usuario (más nuevas primero) con sus pruebas. */
+export async function listarMaterias(
+  userId: string
+): Promise<MateriaConPruebas[]> {
+  const ms = await db
+    .select()
+    .from(materias)
+    .where(eq(materias.userId, userId))
+    .orderBy(desc(materias.createdAt));
   const out: MateriaConPruebas[] = [];
   for (const m of ms) {
     const ps = await db
@@ -23,11 +29,15 @@ export async function listarMaterias(): Promise<MateriaConPruebas[]> {
   return out;
 }
 
-/** Obtiene una materia por id con sus pruebas (más nuevas primero), o null. */
+/** Obtiene una materia del usuario por id con sus pruebas, o null si no es suya. */
 export async function obtenerMateria(
-  id: string
+  id: string,
+  userId: string
 ): Promise<MateriaConPruebas | null> {
-  const [m] = await db.select().from(materias).where(eq(materias.id, id));
+  const [m] = await db
+    .select()
+    .from(materias)
+    .where(and(eq(materias.id, id), eq(materias.userId, userId)));
   if (!m) return null;
   const ps = await db
     .select()
@@ -37,8 +47,9 @@ export async function obtenerMateria(
   return { ...m, pruebas: ps };
 }
 
-/** Crea una materia junto con su primera prueba. */
+/** Crea una materia (del usuario) junto con su primera prueba. */
 export async function insertarMateria(data: {
+  userId: string;
   nombre: string;
   texto: string;
   resumen: string;
@@ -46,7 +57,12 @@ export async function insertarMateria(data: {
 }): Promise<MateriaConPruebas> {
   const [m] = await db
     .insert(materias)
-    .values({ nombre: data.nombre, texto: data.texto, resumen: data.resumen })
+    .values({
+      userId: data.userId,
+      nombre: data.nombre,
+      texto: data.texto,
+      resumen: data.resumen,
+    })
     .returning();
   const [p] = await db
     .insert(pruebas)
@@ -79,7 +95,9 @@ export async function guardarResultadoPrueba(
     .where(eq(pruebas.id, pruebaId));
 }
 
-/** Elimina una materia (sus pruebas se borran en cascada). */
-export async function borrarMateria(id: string): Promise<void> {
-  await db.delete(materias).where(eq(materias.id, id));
+/** Elimina una materia del usuario (sus pruebas se borran en cascada). */
+export async function borrarMateria(id: string, userId: string): Promise<void> {
+  await db
+    .delete(materias)
+    .where(and(eq(materias.id, id), eq(materias.userId, userId)));
 }

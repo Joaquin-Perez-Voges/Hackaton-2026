@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { MateriaCard } from "@/components/materia-card";
 import { NuevaMateria } from "@/components/nueva-materia";
 import { listarMaterias } from "@/lib/db/queries";
+import { requireSession } from "@/lib/session";
 import { calcularRacha } from "@/lib/streak";
 
 export const dynamic = "force-dynamic";
@@ -30,10 +31,12 @@ function Stat({
 }
 
 export default async function Home() {
+  const session = await requireSession();
+
   let materias: Awaited<ReturnType<typeof listarMaterias>> = [];
   let dbError = false;
   try {
-    materias = await listarMaterias();
+    materias = await listarMaterias(session.user.id);
   } catch {
     dbError = true;
   }
@@ -43,12 +46,13 @@ export default async function Home() {
   );
   const racha = calcularRacha(completadas.map((p) => p.createdAt));
   const aciertos = completadas.reduce((a, p) => a + (p.correctas ?? 0), 0);
+  const nombre = session.user.name?.split(" ")[0];
 
   return (
     <div className="mx-auto w-full max-w-2xl px-6 py-10 md:py-14">
       <header className="mb-6">
         <h1 className="font-heading text-2xl font-bold tracking-tight">
-          ¡Hola! 👋
+          ¡Hola{nombre ? `, ${nombre}` : ""}! 👋
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Seguí tu racha y practicá con IA.
