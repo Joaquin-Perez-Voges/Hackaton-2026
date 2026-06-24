@@ -461,3 +461,62 @@ async function handleEnviarResumen() {
 document.getElementById('btn-cerrar-alerta')?.addEventListener('click', () => {
   document.getElementById('overlay-alerta')?.classList.add('oculto')
 })
+
+// ── Navegación sidebar ────────────────────────────────────────────────────────
+document.getElementById('nav-mis-materias').addEventListener('click', () => {
+  document.getElementById('view-materias').classList.remove('oculto')
+  document.getElementById('view-resumen').classList.add('oculto')
+  document.getElementById('nav-mis-materias').classList.add('active')
+  document.getElementById('nav-hacer-resumen').classList.remove('active')
+})
+
+document.getElementById('nav-hacer-resumen').addEventListener('click', () => {
+  document.getElementById('view-resumen').classList.remove('oculto')
+  document.getElementById('view-materias').classList.add('oculto')
+  document.getElementById('nav-hacer-resumen').classList.add('active')
+  document.getElementById('nav-mis-materias').classList.remove('active')
+})
+
+// ── Resumen ───────────────────────────────────────────────────────────────────
+document.getElementById('btn-enviar-resumen').addEventListener('click', async () => {
+  const texto = document.getElementById('resumen-texto').value.trim()
+  const longitud = document.getElementById('resumen-longitud').value
+
+  if (!texto) {
+    mostrarAlerta('Ingresá un texto para resumir.')
+    return
+  }
+
+  document.getElementById('overlay-loading-resumen').classList.remove('oculto')
+  document.getElementById('resumen-resultado').classList.add('oculto')
+
+  try {
+    const res = await fetch('/api/resumen', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ texto, longitud })
+    })
+
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error)
+
+    document.getElementById('resumen-texto-salida').textContent = data.resumen
+    document.getElementById('resumen-resultado').classList.remove('oculto')
+
+  } catch (error) {
+    mostrarAlerta('Error al generar el resumen: ' + error.message)
+  } finally {
+    document.getElementById('overlay-loading-resumen').classList.add('oculto')
+  }
+})
+
+document.getElementById('btn-copiar-resumen').addEventListener('click', () => {
+  const texto = document.getElementById('resumen-texto-salida').textContent
+  navigator.clipboard.writeText(texto)
+  mostrarAlerta('Resumen copiado al portapapeles.')
+})
+
+document.getElementById('btn-nuevo-resumen').addEventListener('click', () => {
+  document.getElementById('resumen-texto').value = ''
+  document.getElementById('resumen-resultado').classList.add('oculto')
+})

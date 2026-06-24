@@ -321,5 +321,59 @@ app.patch('/api/materias/:id/pruebas/:pruebaId/resultado', (req, res) => {
   }
 });
 
+// ── POST /api/resumen ─────────────────────────────────────────────────────────
+app.post('/api/resumen', async (req, res) => {
+  const { texto, tema } = req.body;
+
+  if (!texto && !tema) {
+    return res.status(400).json({ error: 'Ingresá un texto o un tema.' });
+  }
+
+  const prompt = texto
+    ? `Resumí el siguiente texto de forma clara y concisa, destacando las ideas principales:\n\n${texto}`
+    : `Hacé un resumen completo y claro sobre el siguiente tema: ${tema}`;
+
+  try {
+    const contenidoIA = await llamarIA(prompt);
+    res.json({ resumen: contenidoIA });
+  } catch (error) {
+    console.error('Error al generar resumen:', error.message);
+
+    if (error.message.includes('429')) {
+      return res.status(429).json({ error: '⏳ Límite de la IA alcanzado. Volvé a intentarlo en unos minutos.' });
+    }
+
+    res.status(500).json({ error: error.message || 'Error al generar el resumen' });
+  }
+});
+
+
+app.post('/api/resumen', async (req, res) => {
+  const { texto, longitud } = req.body
+
+  if (!texto) return res.status(400).json({ error: 'Ingresá un texto.' })
+
+  const instruccionLongitud = {
+    breve: 'en 1 a 3 frases cortas',
+    medio: 'en 1 a 2 párrafos',
+    largo: 'de forma detallada y completa'
+  }[longitud] || 'en 1 a 2 párrafos'
+
+  const prompt = `Resumí el siguiente texto ${instruccionLongitud}, destacando las ideas principales. Respondé solo con el resumen, sin introducciones ni aclaraciones.\n\nTEXTO:\n${texto}`
+
+  try {
+    const resumen = await llamarIA(prompt)
+    res.json({ resumen })
+  } catch (error) {
+    console.error('Error al generar resumen:', error.message)
+    if (error.message.includes('429')) {
+      return res.status(429).json({ error: '⏳ Límite de la IA alcanzado. Volvé a intentarlo en unos minutos.' })
+    }
+    res.status(500).json({ error: error.message || 'Error al generar el resumen' })
+  }
+})
+
+
+
 // ── Inicio ───────────────────────────────────────────────────────────
 app.listen(3000, () => console.log('✅ Servidor corriendo en http://localhost:3000'));
