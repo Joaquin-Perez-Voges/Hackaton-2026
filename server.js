@@ -9,12 +9,12 @@ const app = express();
 app.use(express.json());
 app.use(express.static('FrontEnd'));
 
-// ── Configuración Groq ────────────────────────────────────────────────────────
+// ── Configuración Groq ───────────────────────────────────────────────────────
 const GROQ_API_KEY = apikey();
 const GROQ_URL     = "https://api.groq.com/openai/v1/chat/completions";
 const MODEL        = "llama-3.3-70b-versatile";
 
-// ── Persistencia ──────────────────────────────────────────────────────────────
+// ── Persistencia ────────────────────────────────────────────────────────────
 const DATOS_PATH = path.join('datos', 'materias.json');
 if (!fs.existsSync('datos')) fs.mkdirSync('datos');
 if (!fs.existsSync(DATOS_PATH)) fs.writeFileSync(DATOS_PATH, '[]', 'utf-8');
@@ -121,7 +121,7 @@ Nota: El campo "correcta" debe ser un número entero que represente el índice (
 TEXTO A PROCESAR:${texto}`;
 }
 
-// ── GET /api/materias ─────────────────────────────────────────────────────────
+// ── GET /api/materias ───────────────────────────────────────────────────────
 app.get('/api/materias', (req, res) => {
   try {
     const materias = JSON.parse(fs.readFileSync(DATOS_PATH, 'utf-8'));
@@ -132,7 +132,7 @@ app.get('/api/materias', (req, res) => {
   }
 });
 
-// ── POST /api/crear ───────────────────────────────────────────────────────────
+// ── POST /api/crear ────────────────────────────────────────────────────────
 // Crea la materia y guarda la primera prueba en pruebas[0]
 app.post('/api/crear', async (req, res) => {
   if (procesando) {
@@ -185,7 +185,7 @@ app.post('/api/crear', async (req, res) => {
   }
 });
 
-// ── POST /api/materias/:id/prueba ─────────────────────────────────────────────
+// ── POST /api/materias/:id/prueba ────────────────────────────────────────────
 // Genera una nueva prueba para una materia ya existente y la agrega a pruebas[]
 app.post('/api/materias/:id/prueba', async (req, res) => {
   if (procesando) {
@@ -315,5 +315,30 @@ app.patch('/api/materias/:id/pruebas/:pruebaId/resultado', (req, res) => {
   }
 });
 
-// ── Inicio ────────────────────────────────────────────────────────────────────
+// ── POST /api/resumen ────────────────────────────────────────────────────────
+// Genera un resumen simple usando la función llamarIA
+app.post('/api/resumen', async (req, res) => {
+  const { texto, longitud = 'medio' } = req.body;
+  if (!texto || typeof texto !== 'string' || texto.trim().length === 0) {
+    return res.status(400).json({ error: 'Falta el texto a resumir.' });
+  }
+
+  const longitudInstr = longitud === 'breve'
+    ? 'Resume en 1–3 frases.'
+    : longitud === 'largo'
+      ? 'Haz un resumen detallado, en hasta 4–6 párrafos breves.'
+      : 'Resume en 1–2 párrafos.';
+
+  const prompt = `Eres una IA que SOLO genera un resumen en español. ${longitudInstr}\n\nTexto:\n${texto}`;
+
+  try {
+    const contenido = await llamarIA(prompt);
+    return res.json({ resumen: (contenido || '').trim() });
+  } catch (err) {
+    console.error('Error generando resumen:', err);
+    return res.status(502).json({ error: 'Error al generar el resumen.' });
+  }
+});
+
+// ── Inicio ───────────────────────────────────────────────────────────
 app.listen(3000, () => console.log('✅ Servidor corriendo en http://localhost:3000'));
