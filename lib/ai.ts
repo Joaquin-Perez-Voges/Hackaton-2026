@@ -76,7 +76,11 @@ export function tutorSystemPrompt(
   materia: Pick<Materia, "nombre" | "texto" | "resumen"> | null
 ): string {
   if (!materia) {
-    return "Sos un tutor de estudio amable. Todavía no hay una materia cargada, así que pedile al estudiante que cree una.";
+    return `Sos "el tutor" de NextSelf, un asistente de estudio amable y motivador.
+Ayudás al estudiante con cualquier tema que quiera aprender: explicás claro, con
+ejemplos y analogías, y lo guiás paso a paso en vez de darle todo masticado.
+Animalo a crear materias para generar resúmenes y pruebas. No inventes datos: si
+no sabés algo, decilo. Sé breve y conversacional, en español rioplatense.`;
   }
 
   return `Sos "el tutor" de NextSelf, un asistente de estudio para la materia "${materia.nombre}".

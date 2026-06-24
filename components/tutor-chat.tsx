@@ -7,11 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
-export function TutorChat({ materiaId }: { materiaId: string }) {
+export function TutorChat({ materiaId }: { materiaId?: string }) {
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/chat",
-      body: { materiaId },
+      body: materiaId ? { materiaId } : undefined,
     }),
   });
   const [input, setInput] = useState("");
@@ -30,8 +30,9 @@ export function TutorChat({ materiaId }: { materiaId: string }) {
       <div className="flex-1 space-y-4 overflow-y-auto p-4">
         {messages.length === 0 && (
           <p className="mx-auto max-w-sm py-10 text-center text-sm text-muted-foreground">
-            Preguntale al tutor lo que quieras sobre esta materia. Te explica con
-            ejemplos y te guía sin darte las respuestas masticadas.
+            {materiaId
+              ? "Preguntale al tutor lo que quieras sobre esta materia. Te explica con ejemplos y te guía sin darte las respuestas masticadas."
+              : "Preguntale al tutor sobre cualquier tema que estés estudiando. Te explica con ejemplos y te guía paso a paso."}
           </p>
         )}
         {messages.map((m) => (
