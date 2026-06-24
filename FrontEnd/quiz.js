@@ -25,7 +25,7 @@ async function cargarQuiz() {
     const resPrueba = await fetch(`/api/materias/${id}/prueba`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cantidadPreguntas: materiaActual.pruebas[0].preguntas.length })
+      body: JSON.stringify({ cantidadPreguntas: materiaActual.cantidadPreguntas })
     })
 
     if (!resPrueba.ok) {

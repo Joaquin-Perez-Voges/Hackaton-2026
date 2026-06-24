@@ -160,32 +160,22 @@ app.post('/api/crear', async (req, res) => {
   procesando = true;
 
   try {
-    const contenidoIA = await llamarIA(armarPrompt(texto, cantidadPreguntas));
-    const resultado   = parsearJSON(contenidoIA);
-
     const materias = JSON.parse(fs.readFileSync(DATOS_PATH, 'utf-8'));
     const nuevaMateria = {
       id: Date.now(),
       nombre,
       texto,
-      resumen: resultado.resumen,
-      pruebas: [
-        {
-          id: 1,
-          fecha: new Date().toISOString(),
-          preguntas: resultado.preguntas
-        }
-      ]
+      cantidadPreguntas: Number(cantidadPreguntas),
+      pruebas: []
     };
-
+  
     materias.push(nuevaMateria);
     fs.writeFileSync(DATOS_PATH, JSON.stringify(materias, null, 2), 'utf-8');
-
     res.json(nuevaMateria);
-
+  
   } catch (error) {
-    console.error('Error al generar preguntas:', error.message);
-    res.status(500).json({ error: error.message || 'Error al generar preguntas' }); 
+    console.error('Error al crear materia:', error.message);
+    res.status(500).json({ error: 'Error al crear la materia' });
   } finally {
     procesando = false;
   }
@@ -346,8 +336,6 @@ app.post('/api/resumen', async (req, res) => {
     res.status(500).json({ error: error.message || 'Error al generar el resumen' });
   }
 });
-
-
 app.post('/api/resumen', async (req, res) => {
   const { texto, longitud } = req.body
 
