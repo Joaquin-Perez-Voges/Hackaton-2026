@@ -570,3 +570,38 @@ body {
     transition: none;
   }
 }
+
+.resultado-fila {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  background: #f5f7fa;
+  margin-bottom: 0.3rem;
+  font-size: 14px;
+  color: #444;
+}
+
+.resultado-nota {
+  font-weight: 600;
+  color: #4a90e2;
+  white-space: nowrap;
+}
+
+.resultado-diff {
+  font-size: 12px;
+  padding: 0.2rem 0.8rem 0.6rem;
+  font-weight: 500;
+}
+
+.resultado-promedio {
+  margin-top: 0.5rem;
+  padding: 0.8rem 1rem;
+  background: #eef5ff;
+  border-left: 4px solid #4a90e2;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
