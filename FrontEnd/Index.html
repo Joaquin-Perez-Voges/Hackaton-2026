@@ -28,7 +28,7 @@
       <textarea id="input-texto" placeholder="Pegá el texto a estudiar…"></textarea>
       <div class="popup-botones">
         <button id="BotonCerrarPopup">Cancelar</button>
-        <button id="BotonCrearMateria">Continuar</button>
+        <button id="BotonAbrePanelPreguntas">Continuar</button>
       </div>
     </div>
   </div>
@@ -40,7 +40,7 @@
       <input type="number" id="input-cantidad" value="5" min="1" max="20" />
       <div class="popup-botones">
         <button id="BotonCerrarPopupPreguntas">Cancelar</button>
-        <button id="BotonCrearMateriaFinal">Crear</button>
+        <button id="BotonCrearMateria">Crear</button>
       </div>
     </div>
   </div>
@@ -58,6 +58,15 @@
       <div class="loading-inner">
         <div class="spinner"></div>
         <p>Generando preguntas…</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="overlay-alerta" class="overlay oculto">
+    <div class="popup popup-chico">
+      <p id="alerta-mensaje" style="font-size: 0.9rem; color: var(--text-mid);">texto</p>
+      <div class="popup-botones">
+        <button id="btn-cerrar-alerta">Aceptar</button>
       </div>
     </div>
   </div>

@@ -1,6 +1,7 @@
 // Variable para trackear qué materia está seleccionada
 let materiaSeleccionada = null
 
+//Texto y nombre guardados para crear la materia
 let textoGuardado = ''
 let nombreGuardado = ''
 
@@ -8,20 +9,24 @@ let nombreGuardado = ''
 async function cargarMaterias() {
   const res = await fetch('/api/materias')
   const materias = await res.json()
+  //Vacia la lista de materias y la vuelve a llenar
   const lista = document.getElementById('lista-materias')
   lista.innerHTML = ''
 
+  // Si no hay materias, mostrar un mensaje especial
   if (materias.length === 0) {
     lista.innerHTML = '<p style="color:#999; margin-bottom:1rem;">Todavía no hay materias. ¡Creá una!</p>'
     return
   }
 
+  //Muestra cada materia en la lista y les crea su html
   materias.forEach(m => {
     // La cantidad de preguntas se lee de la última prueba generada
     const ultimaPrueba = m.pruebas[m.pruebas.length - 1]
     const cantPreguntas = ultimaPrueba ? ultimaPrueba.preguntas.length : 0
     const cantPruebas   = m.pruebas.length
 
+    // Crea el HTML de la materia
     const card = document.createElement('div')
     card.className = 'CartaMateria'
     card.innerHTML = `
@@ -35,55 +40,61 @@ async function cargarMaterias() {
   })
 }
 
-// Cerrar el popup de crear materia
-function cerrarPopupCrear() {
+// Función para cerrar todos los popups y limpiar los inputs
+function cerrarPopups() {
+  //Popup donde ingresas el nombre y texto de la materia
   document.getElementById('overlay-crear').classList.add('oculto')
   document.getElementById('input-nombre').value = ''
   document.getElementById('input-texto').value = ''
+
+  //Popup donde ingresas la cantidad de preguntas
+  document.getElementById('overlay-cantidad').classList.add('oculto')
 }
 
+// Abre el panel de creación de materia
 const BotonAbrirPanelCreacion = document.getElementById('btn-nuevo')
 BotonAbrirPanelCreacion.addEventListener('click', function () {
   document.getElementById('overlay-crear').classList.remove('oculto')
 })
 
+//Cierra el panel de creación de materia
 const BotonCerrarPopup = document.getElementById('BotonCerrarPopup')
 BotonCerrarPopup.addEventListener('click', function () {
-  cerrarPopupCrear()
+  cerrarPopups()
 })
 
-const BotonCrearMateria = document.getElementById('BotonCrearMateria')
+// Abre el panel de cantidad de preguntas y guarda el nombre y texto de la materia
+const BotonCrearMateria = document.getElementById('BotonAbrePanelPreguntas')
 BotonCrearMateria.addEventListener('click', function () {
   const nombre = document.getElementById('input-nombre').value.trim()
   const texto  = document.getElementById('input-texto').value.trim()
 
+  // Validación de inputs (no vacios)
   if (!nombre) { alert('Ingresá un nombre válido para la materia.'); return }
   if (!texto)  { alert('Ingresá el texto a estudiar.'); return }
-
   nombreGuardado = nombre
   textoGuardado  = texto
 
-  cerrarPopupCrear()
+  //Cierra el popup de creación y abre el de cantidad de preguntas
+  cerrarPopups()
   document.getElementById('overlay-cantidad').classList.remove('oculto')
 })
 
-function cerrarPopupCantidad() {
-  document.getElementById('overlay-cantidad').classList.add('oculto')
-}
-
+// Cierra el panel de cantidad de preguntas
 const BotonCerrarPopupPreguntas = document.getElementById('BotonCerrarPopupPreguntas')
 BotonCerrarPopupPreguntas.addEventListener('click', function () {
-  cerrarPopupCantidad()
+  cerrarPopups()
 })
 
-const BotonCrearMateriaFinal = document.getElementById('BotonCrearMateriaFinal')
+// Llama a la función para generar la materia
+const BotonCrearMateriaFinal = document.getElementById('BotonCrearMateria')
 BotonCrearMateriaFinal.addEventListener('click', function () {
   generarMateria()
 })
 
-
+// Abre el menú de opciones para la materia seleccionada
 function abrirOpciones(id, boton) {
-  const menu = document.getElementById('menu-opciones')
+  let menu = document.getElementById('menu-opciones')
   
   // Si ya está abierto para la misma materia, cerrarlo
   if (!menu.classList.contains('oculto') && materiaSeleccionada === id) {
@@ -91,15 +102,15 @@ function abrirOpciones(id, boton) {
     materiaSeleccionada = null
     return
   }
-
+  // Si está abierto para otra materia, cerrarlo primero
   materiaSeleccionada = id
-  const rect = boton.getBoundingClientRect()
+  let rect = boton.getBoundingClientRect()
   menu.style.top  = `${rect.bottom + 6}px`
   menu.style.left = `${rect.right - 180}px`
   menu.classList.remove('oculto')
 }
 
-// Cerrar el menú al clickear en cualquier otro lado
+// Cerrar el menú de ajustes al clickear en cualquier otro lado
 document.addEventListener('click', (e) => {
   const menu = document.getElementById('menu-opciones')
   if (!menu.classList.contains('oculto') && !menu.contains(e.target) && !e.target.classList.contains('btn-opciones')) {
@@ -108,18 +119,19 @@ document.addEventListener('click', (e) => {
   }
 })
 
-
+// Botones del menú de opciones
+// Elimina la materia
 document.getElementById('btn-eliminar-materia').addEventListener('click', async () => {
   document.getElementById('menu-opciones').classList.add('oculto')  // ← era overlay-opciones
   await eliminarMateria(materiaSeleccionada)
   materiaSeleccionada = null
 })
-
+// Ver resultados de la materia (idea futuro)
 document.getElementById('btn-ver-resultados').addEventListener('click', () => {
   document.getElementById('menu-opciones').classList.add('oculto')  // ← era overlay-opciones
   // Por ahora no hace nada
 })
-
+// Edita la materia
 document.getElementById('btn-editar-materia').addEventListener('click', async () => {
   document.getElementById('menu-opciones').classList.add('oculto')  // ← era overlay-opciones
 
@@ -133,23 +145,30 @@ document.getElementById('btn-editar-materia').addEventListener('click', async ()
 })
 
 
-// El botón que elimina la materia
+// Función para eliminar una materia por su ID
 async function eliminarMateria(id) {
   await fetch(`/api/materias/${id}`, { method: 'DELETE' })
+  // Recarga la lista de materias después de eliminar
   cargarMaterias()
 }
 
 // Genera la materia y su primera prueba
 async function generarMateria() {
   const cantidad = document.getElementById('input-cantidad').value
+  if (!cantidad || isNaN(cantidad) || cantidad < 1 || cantidad > 25) {
+    alert('Ingresá una cantidad válida de preguntas.')
+    return
+  }
 
   BotonCrearMateriaFinal.disabled = true
 
-  cerrarPopupCantidad()
+  // Cierra el popup de cantidad de preguntas y muestra el overlay de carga fachero
+  cerrarPopups()
   await new Promise(r => setTimeout(r, 50))
   document.getElementById('overlay-loading').classList.remove('oculto')
   await new Promise(r => setTimeout(r, 50))
 
+  // Llama a la API para crear la materia y su primera prueba
   try {
     const res = await fetch('/api/crear', {
       method: 'POST',
@@ -170,6 +189,7 @@ async function generarMateria() {
       return
     }
 
+    // Si hubo otro error, mostrar alerta
     if (!res.ok) throw new Error(materia.error || 'Error desconocido')
 
     document.getElementById('overlay-loading').classList.add('oculto')
@@ -184,4 +204,5 @@ async function generarMateria() {
   }
 }
 
+// Carga las materias al iniciar la página
 cargarMaterias()
