@@ -643,3 +643,8 @@ body {
   margin-bottom: 16px;       /* Despegado de los botones inferiores */
   padding-right: 8px;        /* Espacio para que la barra no tape el texto */
 }
+
+.sidebar-logo {
+  width: 120px;
+  margin-bottom: 1rem;
+}
