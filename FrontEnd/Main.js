@@ -1,5 +1,6 @@
 // Variable para trackear qué materia está seleccionada
 let materiaSeleccionada = null
+let modoEdicion = false
 
 //Texto y nombre guardados para crear la materia
 let textoGuardado = ''
@@ -54,6 +55,7 @@ function cerrarPopups() {
 // Abre el panel de creación de materia
 const BotonAbrirPanelCreacion = document.getElementById('btn-nuevo')
 BotonAbrirPanelCreacion.addEventListener('click', function () {
+  modoEdicion = false
   document.getElementById('overlay-crear').classList.remove('oculto')
 })
 
@@ -65,17 +67,43 @@ BotonCerrarPopup.addEventListener('click', function () {
 
 // Abre el panel de cantidad de preguntas y guarda el nombre y texto de la materia
 const BotonCrearMateria = document.getElementById('BotonAbrePanelPreguntas')
-BotonCrearMateria.addEventListener('click', function () {
+BotonCrearMateria.addEventListener('click', async function () {
+
+  if (modoEdicion) {
+
+    await fetch(`/api/materias/${materiaSeleccionada}/nombre`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        nombre: document.getElementById('input-nombre').value.trim()
+      })
+    })
+
+    modoEdicion = false
+    cerrarPopups()
+    cargarMaterias()
+    return
+  }
+
+  // Si no está editando, sigue el flujo normal
   const nombre = document.getElementById('input-nombre').value.trim()
-  const texto  = document.getElementById('input-texto').value.trim()
+  const texto = document.getElementById('input-texto').value.trim()
 
-  // Validación de inputs (no vacios)
-  if (!nombre) { alert('Ingresá un nombre válido para la materia.'); return }
-  if (!texto)  { alert('Ingresá el texto a estudiar.'); return }
+  if (!nombre) {
+    alert('Ingresá un nombre válido para la materia.')
+    return
+  }
+
+  if (!texto) {
+    alert('Ingresá el texto a estudiar.')
+    return
+  }
+
   nombreGuardado = nombre
-  textoGuardado  = texto
+  textoGuardado = texto
 
-  //Cierra el popup de creación y abre el de cantidad de preguntas
   cerrarPopups()
   document.getElementById('overlay-cantidad').classList.remove('oculto')
 })
@@ -213,14 +241,19 @@ lista.appendChild(fila)
 })
 // Edita la materia
 document.getElementById('btn-editar-materia').addEventListener('click', async () => {
-  document.getElementById('menu-opciones').classList.add('oculto')  // ← era overlay-opciones
+  document.getElementById('menu-opciones').classList.add('oculto')
+
+  modoEdicion = true
 
   const res = await fetch('/api/materias')
   const materias = await res.json()
+
   const materia = materias.find(m => m.id === materiaSeleccionada)
 
   document.getElementById('input-nombre').value = materia.nombre
   document.getElementById('input-texto').value = materia.texto
+  document.getElementById('input-texto').readOnly = true
+
   document.getElementById('overlay-crear').classList.remove('oculto')
 })
 

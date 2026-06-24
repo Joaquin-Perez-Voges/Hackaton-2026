@@ -1,3 +1,5 @@
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
@@ -177,7 +179,7 @@ app.post('/api/crear', async (req, res) => {
 
   } catch (error) {
     console.error('Error al generar preguntas:', error.message);
-    res.status(500).json({ error: error.message || 'Error al generar preguntas' });
+    res.status(500).json({ error: error.message || 'Error al generar preguntas' }); 
   } finally {
     procesando = false;
   }
@@ -227,6 +229,41 @@ app.post('/api/materias/:id/prueba', async (req, res) => {
     procesando = false;
   }
 });
+
+// ── PUT /api/materias/:id/nombre ──────────────────────────────────────────────
+// Cambia únicamente el nombre de una materia
+app.put('/api/materias/:id/nombre', (req, res) => {
+  try {
+    const id = Number(req.params.id)
+    const { nombre } = req.body
+
+    if (!nombre || !nombre.trim()) {
+      return res.status(400).json({ error: 'Nombre inválido' })
+    }
+
+    const materias = JSON.parse(fs.readFileSync(DATOS_PATH, 'utf-8'))
+    const materia = materias.find(m => m.id === id)
+
+    if (!materia) {
+      return res.status(404).json({ error: 'Materia no encontrada' })
+    }
+
+    materia.nombre = nombre.trim()
+
+    fs.writeFileSync(
+      DATOS_PATH,
+      JSON.stringify(materias, null, 2),
+      'utf-8'
+    )
+
+    res.json(materia)
+
+  } catch (error) {
+    console.error('Error editando materia:', error)
+    res.status(500).json({ error: 'Error al editar la materia' })
+  }
+})
+
 
 // ── DELETE /api/materias/:id ──────────────────────────────────────────────────
 app.delete('/api/materias/:id', (req, res) => {
