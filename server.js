@@ -9,12 +9,12 @@ const app = express();
 app.use(express.json());
 app.use(express.static('FrontEnd'));
 
-// ── Configuración Groq ────────────────────────────────────────────────────────
+// ── Configuración Groq ───────────────────────────────────────────────────────
 const GROQ_API_KEY = apikey();
 const GROQ_URL     = "https://api.groq.com/openai/v1/chat/completions";
 const MODEL        = "llama-3.3-70b-versatile";
 
-// ── Persistencia ──────────────────────────────────────────────────────────────
+// ── Persistencia ────────────────────────────────────────────────────────────
 const DATOS_PATH = path.join('datos', 'materias.json');
 if (!fs.existsSync('datos')) fs.mkdirSync('datos');
 if (!fs.existsSync(DATOS_PATH)) fs.writeFileSync(DATOS_PATH, '[]', 'utf-8');
@@ -24,6 +24,12 @@ let procesando = false;
 
 // ── Helper: llamar a Groq ─────────────────────────────────────────────────────
 async function llamarIA(prompt) {
+  // Soporte para Node < 18: cargar fetch desde node-fetch si no existe
+  if (typeof fetch === 'undefined') {
+    const fetchModule = await import('node-fetch');
+    global.fetch = fetchModule.default || fetchModule;
+  }
+
   const response = await fetch(GROQ_URL, {
     method: 'POST',
     headers: {
@@ -121,7 +127,7 @@ Nota: El campo "correcta" debe ser un número entero que represente el índice (
 TEXTO A PROCESAR:${texto}`;
 }
 
-// ── GET /api/materias ─────────────────────────────────────────────────────────
+// ── GET /api/materias ───────────────────────────────────────────────────────
 app.get('/api/materias', (req, res) => {
   try {
     const materias = JSON.parse(fs.readFileSync(DATOS_PATH, 'utf-8'));
@@ -132,7 +138,7 @@ app.get('/api/materias', (req, res) => {
   }
 });
 
-// ── POST /api/crear ───────────────────────────────────────────────────────────
+// ── POST /api/crear ────────────────────────────────────────────────────────
 // Crea la materia y guarda la primera prueba en pruebas[0]
 app.post('/api/crear', async (req, res) => {
   if (procesando) {
@@ -185,7 +191,7 @@ app.post('/api/crear', async (req, res) => {
   }
 });
 
-// ── POST /api/materias/:id/prueba ─────────────────────────────────────────────
+// ── POST /api/materias/:id/prueba ────────────────────────────────────────────
 // Genera una nueva prueba para una materia ya existente y la agrega a pruebas[]
 app.post('/api/materias/:id/prueba', async (req, res) => {
   if (procesando) {
@@ -269,7 +275,7 @@ app.put('/api/materias/:id/nombre', (req, res) => {
 app.delete('/api/materias/:id', (req, res) => {
   try {
     const id = Number(req.params.id);
-    let materias = JSON.parse(fs.readFileSync(DATOS_PATH, 'utf-8'));
+    let materias = JSON.parse(fs.readFileSync(DATOS_PATH, null, 2), 'utf-8');
     const idx = materias.findIndex(m => m.id === id);
 
     if (idx === -1) return res.status(404).json({ error: 'Materia no encontrada' });
@@ -315,5 +321,5 @@ app.patch('/api/materias/:id/pruebas/:pruebaId/resultado', (req, res) => {
   }
 });
 
-// ── Inicio ────────────────────────────────────────────────────────────────────
+// ── Inicio ───────────────────────────────────────────────────────────
 app.listen(3000, () => console.log('✅ Servidor corriendo en http://localhost:3000'));
