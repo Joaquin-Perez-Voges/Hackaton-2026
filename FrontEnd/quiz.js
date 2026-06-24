@@ -110,7 +110,7 @@ function renderizarPrueba() {
   document.querySelectorAll('input[type="radio"]').forEach(r => r.disabled = true)
 
   const pct   = Math.round((correctas / total) * 100)
-  const emoji = pct === 100 ? '🎉' : pct >= 60 ? '👍' : '📚'
+  const emoji = pct === 100 ? '' : pct >= 60 ? '' : ''
 
   const resultado = document.getElementById('quiz-resultado')
   resultado.textContent = `${emoji} ${correctas} de ${total} correctas (${pct}%)`
