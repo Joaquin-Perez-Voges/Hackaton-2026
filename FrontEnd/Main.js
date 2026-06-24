@@ -273,17 +273,6 @@ if (btnVerResultados) btnVerResultados.addEventListener('click', async () => {
         const diffDiv = document.createElement('div')
         diffDiv.className = 'resultado-diff'
 
-        if (diff > 0) {
-          diffDiv.textContent = `▲ Mejoraste un ${diff}% respecto a la prueba anterior`
-          diffDiv.style.color = '#27ae60'
-        } else if (diff < 0) {
-          diffDiv.textContent = `▼ Bajaste un ${Math.abs(diff)}% respecto a la prueba anterior`
-          diffDiv.style.color = '#e74c3c'
-        } else {
-          diffDiv.textContent = `— No tuviste cambios respecto a la prueba anterior`
-          diffDiv.style.color = '#999'
-        }
-
         lista.appendChild(diffDiv)
       }
 
