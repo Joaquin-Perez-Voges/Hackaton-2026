@@ -24,6 +24,12 @@ let procesando = false;
 
 // ── Helper: llamar a Groq ─────────────────────────────────────────────────────
 async function llamarIA(prompt) {
+  // Soporte para Node < 18: cargar fetch desde node-fetch si no existe
+  if (typeof fetch === 'undefined') {
+    const fetchModule = await import('node-fetch');
+    global.fetch = fetchModule.default || fetchModule;
+  }
+
   const response = await fetch(GROQ_URL, {
     method: 'POST',
     headers: {
@@ -269,7 +275,7 @@ app.put('/api/materias/:id/nombre', (req, res) => {
 app.delete('/api/materias/:id', (req, res) => {
   try {
     const id = Number(req.params.id);
-    let materias = JSON.parse(fs.readFileSync(DATOS_PATH, 'utf-8'));
+    let materias = JSON.parse(fs.readFileSync(DATOS_PATH, null, 2), 'utf-8');
     const idx = materias.findIndex(m => m.id === id);
 
     if (idx === -1) return res.status(404).json({ error: 'Materia no encontrada' });
@@ -312,31 +318,6 @@ app.patch('/api/materias/:id/pruebas/:pruebaId/resultado', (req, res) => {
   } catch (error) {
     console.error('Error guardando resultado:', error);
     res.status(500).json({ error: 'Error al guardar el resultado' });
-  }
-});
-
-// ── POST /api/resumen ────────────────────────────────────────────────────────
-// Genera un resumen simple usando la función llamarIA
-app.post('/api/resumen', async (req, res) => {
-  const { texto, longitud = 'medio' } = req.body;
-  if (!texto || typeof texto !== 'string' || texto.trim().length === 0) {
-    return res.status(400).json({ error: 'Falta el texto a resumir.' });
-  }
-
-  const longitudInstr = longitud === 'breve'
-    ? 'Resume en 1–3 frases.'
-    : longitud === 'largo'
-      ? 'Haz un resumen detallado, en hasta 4–6 párrafos breves.'
-      : 'Resume en 1–2 párrafos.';
-
-  const prompt = `Eres una IA que SOLO genera un resumen en español. ${longitudInstr}\n\nTexto:\n${texto}`;
-
-  try {
-    const contenido = await llamarIA(prompt);
-    return res.json({ resumen: (contenido || '').trim() });
-  } catch (err) {
-    console.error('Error generando resumen:', err);
-    return res.status(502).json({ error: 'Error al generar el resumen.' });
   }
 });
 
