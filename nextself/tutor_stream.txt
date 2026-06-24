@@ -1,0 +1,18 @@
+data: {"type":"start"}
+
+data: {"type":"start-step"}
+
+data: {"type":"text-start","id":"0"}
+
+data: {"type":"text-delta","id":"0","delta":"La"}
+
+data: {"type":"text-delta","id":"0","delta":" fotosíntesis ocurre principalmente en los **cloroplastos**."}
+
+data: {"type":"text-end","id":"0"}
+
+data: {"type":"finish-step"}
+
+data: {"type":"finish","finishReason":"stop"}
+
+data: [DONE]
+
