@@ -161,9 +161,24 @@ document.getElementById('btn-ver-resultados').addEventListener('click', async ()
         <span class="resultado-nota">${prueba.correctas} de ${prueba.total}</span>
       `
       lista.appendChild(fila)
-    })
-  }
 
+    })
+    if (pruebasRealizadas.length > 0) {
+      const promedio = Math.round(
+        pruebasRealizadas.reduce((acc, p) => acc + (p.correctas / p.total) * 100, 0) / pruebasRealizadas.length
+      )
+      const emoji = promedio === 100 ? '🎉' : promedio >= 60 ? '👍' : '📚'
+    
+      const hr = document.createElement('hr')
+      hr.style.cssText = 'border: none; border-top: 1px solid #e0e0e0; margin: 1rem 0;'
+      lista.appendChild(hr)
+    
+      const promedioDiv = document.createElement('div')
+      promedioDiv.className = 'resultado-promedio'
+      promedioDiv.textContent = `${emoji} El promedio de las pruebas es:  ${promedio}%`
+      lista.appendChild(promedioDiv)
+    }
+  }
   document.getElementById('btn-cerrar-resultados').addEventListener('click', () => {
     document.getElementById('overlay-resultados').classList.add('oculto')
   })
